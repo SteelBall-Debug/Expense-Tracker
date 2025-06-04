@@ -59,3 +59,4 @@ class Sidebar(ctk.CTkFrame):
 
 if __name__ == "__main__":
     App("eXp", (800, 500))      # App( title, geometry(tuple) )
+    # first commit
