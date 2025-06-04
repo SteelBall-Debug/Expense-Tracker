@@ -1,7 +1,7 @@
 # Personal Finance/Expense Tracker App made using Custom tkinter
 
 import customtkinter as ctk
-# hello
+
 
 class App(ctk.CTk):
 
