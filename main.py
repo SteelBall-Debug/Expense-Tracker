@@ -1,6 +1,8 @@
 # Personal Finance/Expense Tracker App made using Custom tkinter
 
 import customtkinter as ctk
+from Dashboard import Dashboard
+from Settings import Settings
 
 
 class App(ctk.CTk):
@@ -19,12 +21,26 @@ class App(ctk.CTk):
         self.sidebar = Sidebar(self, "#1054c2")
         self.sidebar.grid(row=0, column=0, sticky="nsew")
 
+        # Dashboard
+        self.dashboard = Dashboard(self)
+
+        # Settings
+        self.settings = Settings(self)
+
         self.mainloop()
 
     def grid(self):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=5)
         self.columnconfigure(1, weight=75)
+
+    def grid_dash(self):
+        self.dashboard.grid(row=0, column=1, sticky="nsew")
+        self.dashboard.lift()
+
+    def grid_settings(self):
+        self.settings.grid(row=0, column=1, sticky="nsew")
+        self.settings.lift()
 
 
 class Sidebar(ctk.CTkFrame):
@@ -47,13 +63,13 @@ class Sidebar(ctk.CTkFrame):
         self.grid_rowconfigure(6, weight=1)
 
     def create_widgets(self):
-        dash_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Dashboard")
+        dash_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Dashboard", command=self.parent.grid_dash)
         dash_button.grid(row=1, column=0, sticky="nsew", pady=5, padx=5)
 
         table_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Table-view")
         table_button.grid(row=2, column=0, sticky="nsew", pady=5, padx=5)
 
-        settings_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Settings")
+        settings_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Settings", command=self.parent.grid_settings)
         settings_button.grid(row=3, column=0, sticky="nsew", pady=5, padx=5)
 
 
