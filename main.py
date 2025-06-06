@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from Dashboard import Dashboard
 from Settings import Settings
+from Tabular_view import Table
 
 
 class App(ctk.CTk):
@@ -24,6 +25,9 @@ class App(ctk.CTk):
         # Dashboard
         self.dashboard = Dashboard(self)
 
+        # Tabular-View
+        self.table_view = Table(self)
+
         # Settings
         self.settings = Settings(self)
 
@@ -37,6 +41,10 @@ class App(ctk.CTk):
     def grid_dash(self):
         self.dashboard.grid(row=0, column=1, sticky="nsew")
         self.dashboard.lift()
+
+    def grid_table(self):
+        self.table_view.grid(row=0, column=1, sticky="nsew")
+        self.table_view.lift()
 
     def grid_settings(self):
         self.settings.grid(row=0, column=1, sticky="nsew")
@@ -66,7 +74,7 @@ class Sidebar(ctk.CTkFrame):
         dash_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Dashboard", command=self.parent.grid_dash)
         dash_button.grid(row=1, column=0, sticky="nsew", pady=5, padx=5)
 
-        table_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Table-view")
+        table_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Table-view", command=self.parent.grid_table)
         table_button.grid(row=2, column=0, sticky="nsew", pady=5, padx=5)
 
         settings_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Settings", command=self.parent.grid_settings)
