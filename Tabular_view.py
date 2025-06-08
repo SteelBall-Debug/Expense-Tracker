@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import font
 from tkcalendar import DateEntry
+# github is annoying
 
 
 class Table(ctk.CTkScrollableFrame):
