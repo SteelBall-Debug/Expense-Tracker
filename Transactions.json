@@ -1,0 +1,18 @@
+{
+    "Transactions": [
+        {
+            "date": "2025-06-09",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "note": "milk\n"
+        },
+        {
+            "date": "2025-06-10",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "note": "milk\neggs\nbread\n"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import font
 from tkcalendar import DateEntry
+import json
 # github is annoying
 
 
@@ -94,12 +95,29 @@ class TransactionEngine(ctk.CTkFrame):
         amount = float(self.amount.get())
         type_value = self.type.get()
         category = self.category.get()
-        date = self.date.get_date()
+        date = str(self.date.get_date())
         note = self.note.get(1.0, ctk.END)
 
         # check for missing values
         if user_value in self.user_values and type_value in self.types and category in self.categories:
             if amount >= 0:
-                print(f"user: {user_value} \namount: {amount} \ntype: {type_value} \ncategory: {category} \ndate: {date} \n"f"note: {note}")
+                # print(f"user: {user_value} \namount: {amount} \ntype: {type_value} \ncategory: {category} \ndate:
+                # {date} \n"f"note: {note}")
+                with open("Transactions.json", "r+") as f:
+                    file_data = json.load(f)
+
+                    new_data = {
+                        "date": date,
+                        "user": user_value,
+                        "type": type_value,
+                        "category": category,
+                        "note": note
+                    }
+
+                    file_data["Transactions"].append(new_data)
+
+                    f.seek(0)
+
+                    json.dump(file_data, f, indent=4)
         else:
             print("please fill all the required fields")
