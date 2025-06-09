@@ -25,7 +25,10 @@ class TransactionEngine(ctk.CTkFrame):
 
         super().__init__(master=master, fg_color="#1054c2", width=500)
         self.create_grid()
-        self.add_transaction = ctk.CTkButton(self, text="+", font=("", 25, "bold"), fg_color="#478af5", text_color="black")
+
+        # Add Transaction Button
+        self.add_transaction = ctk.CTkButton(self, text="+", font=("", 25, "bold"), fg_color="#f51168", text_color="black",
+                                             command=self.get_values)
 
         # Users Combo-Box
         self.user_values = ['You']
@@ -33,11 +36,12 @@ class TransactionEngine(ctk.CTkFrame):
                                      fg_color="#478af5", text_color="black")
 
         # Amount Entry-Box
-        self.amount = ctk.CTkEntry(master=self, placeholder_text="$ ", height=40, width=110, fg_color="#478af5",
-                                   text_color="black")
+        self.amount = ctk.CTkEntry(master=self, placeholder_text="$ ", height=40, width=110,
+                                   text_color="black", fg_color="white")
 
         # Transaction type Combo-Box
-        self.type = ctk.CTkComboBox(master=self, values=["Income", "Expense"], height=40, width=200, justify="center",
+        self.types = ["Income", "Expense"]
+        self.type = ctk.CTkComboBox(master=self, values=self.types, height=40, width=200, justify="center",
                                     fg_color="#478af5", text_color="black")
 
         # Category Combo-Box
@@ -50,7 +54,7 @@ class TransactionEngine(ctk.CTkFrame):
         self.date = DateEntry(self, date_pattern="dd-mm-yyyy", height=100, font=my_font, bg="orange")
 
         # Note widget
-        self.note = ctk.CTkEntry(self, placeholder_text="describe your transaction", height=100, width=160, fg_color="#478af5", text_color="black")
+        self.note = ctk.CTkTextbox(self,fg_color="#478af5", height=100, width=160, text_color="black")
 
         self.grid_widgets()
 
@@ -82,3 +86,20 @@ class TransactionEngine(ctk.CTkFrame):
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
+
+    def get_values(self):
+
+        # assign values to local variables
+        user_value = self.users.get()
+        amount = float(self.amount.get())
+        type_value = self.type.get()
+        category = self.category.get()
+        date = self.date.get_date()
+        note = self.note.get(1.0, ctk.END)
+
+        # check for missing values
+        if user_value in self.user_values and type_value in self.types and category in self.categories:
+            if amount >= 0:
+                print(f"user: {user_value} \namount: {amount} \ntype: {type_value} \ncategory: {category} \ndate: {date} \n"f"note: {note}")
+        else:
+            print("please fill all the required fields")
