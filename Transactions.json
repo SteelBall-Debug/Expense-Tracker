@@ -5,6 +5,7 @@
             "user": "You",
             "type": "Expense",
             "category": "Food",
+            "amount": 200.0,
             "note": "milk\n"
         },
         {
@@ -12,7 +13,8 @@
             "user": "You",
             "type": "Expense",
             "category": "Food",
-            "note": "milk\neggs\nbread\n"
+            "amount": 70.0,
+            "note": "eggs\n"
         }
     ]
 }
