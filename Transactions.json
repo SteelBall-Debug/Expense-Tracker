@@ -1,6 +1,7 @@
 {
     "Transactions": [
         {
+            "id": 1,
             "date": "2025-06-09",
             "user": "You",
             "type": "Expense",
@@ -9,6 +10,7 @@
             "note": "milk\n"
         },
         {
+            "id": 2,
             "date": "2025-06-10",
             "user": "You",
             "type": "Expense",
@@ -17,6 +19,7 @@
             "note": "eggs\n"
         },
         {
+            "id": 3,
             "date": "2025-06-10",
             "user": "You",
             "type": "Income",
@@ -25,6 +28,7 @@
             "note": "fees\n"
         },
         {
+            "id": 4,
             "date": "2025-06-15",
             "user": "You",
             "type": "Expense",
@@ -33,12 +37,40 @@
             "note": "ott apps\n"
         },
         {
+            "id": 5,
             "date": "2025-06-15",
             "user": "You",
             "type": "Income",
             "category": "bills",
             "amount": 2000.0,
             "note": "scholarship\n"
+        },
+        {
+            "id": 6,
+            "date": "2025-06-15",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "amount": 11.0,
+            "note": "chips\n"
+        },
+        {
+            "id": 7,
+            "date": "2025-06-15",
+            "user": "You",
+            "type": "Expense",
+            "category": "misc",
+            "amount": 450.0,
+            "note": "Umbrella\n"
+        },
+        {
+            "id": 8,
+            "date": "2025-06-15",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "amount": 250.0,
+            "note": "Chicken\n"
         }
     ]
 }

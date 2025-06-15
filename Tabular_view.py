@@ -31,8 +31,10 @@ class Table(ctk.CTkScrollableFrame):
         self.table_frame.grid(row=2, column=0, sticky='nsew', pady=10)
 
         # Table view variables
-        self.columns = ("Date", "User", "Type", "Category","Amount", "Note")
+        self.columns = ("Date", "User", "Type", "Category", "Amount", "Note")
         self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=10)
+        self.delete_button = ctk.CTkButton(self, text="🗑", text_color="red", command=self.delete_entry)
+        self.entry_id = 0
         self.setup_table()
 
     def create_grid(self):
@@ -67,7 +69,7 @@ class Table(ctk.CTkScrollableFrame):
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
             self.transactions = file_data["Transactions"]
-
+            self.entry_id = len(self.transactions)
             for entry in self.transactions:
                 row = [entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
                 self.tree.insert("", tk.END, values=row)
@@ -75,6 +77,7 @@ class Table(ctk.CTkScrollableFrame):
         self.tree.pack(fill="both", expand=True)
 
     def refresh_table(self):
+        print(self.entry_id)
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
             transactions = file_data["Transactions"]
@@ -86,6 +89,9 @@ class Table(ctk.CTkScrollableFrame):
                     row = [entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
                     self.transactions.append(entry)
                     self.tree.insert("", tk.END, values=row)
+
+    def delete_entry(self):
+        pass
 
 
 class TransactionEngine(ctk.CTkFrame):
@@ -159,6 +165,7 @@ class TransactionEngine(ctk.CTkFrame):
     def get_values(self):
 
         # assign values to local variables
+        num = self.parent.entry_id + 1
         user_value = self.users.get()
         amount = float(self.amount.get())
         type_value = self.type.get()
@@ -173,6 +180,7 @@ class TransactionEngine(ctk.CTkFrame):
                     file_data = json.load(f)
 
                     new_data = {
+                        "id": num,
                         "date": date,
                         "user": user_value,
                         "type": type_value,
@@ -192,5 +200,8 @@ class TransactionEngine(ctk.CTkFrame):
 
                     self.parent.transactions.append(new_data)
                     self.parent.tree.insert("", tk.END, values=row)
+
+                    # update entry id
+                    self.parent.entry_id += 1
         else:
             print("please fill all the required fields")
