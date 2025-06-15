@@ -31,9 +31,12 @@ class Table(ctk.CTkScrollableFrame):
         self.table_frame.grid(row=2, column=0, sticky='nsew', pady=10)
 
         # Table view variables
-        self.columns = ("Date", "User", "Type", "Category", "Amount", "Note")
+        self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=10)
-        self.delete_button = ctk.CTkButton(self, text="🗑", text_color="red", command=self.delete_entry)
+
+        self.delete_selected = ctk.CTkButton(self, text="Delete Selected", text_color="white", fg_color="#f51168", command=self.delete_entry)
+        self.delete_selected.grid(row=1, column=0, sticky="ne", pady=10, padx=10)
+
         self.entry_id = 0
         self.setup_table()
 
@@ -71,13 +74,12 @@ class Table(ctk.CTkScrollableFrame):
             self.transactions = file_data["Transactions"]
             self.entry_id = len(self.transactions)
             for entry in self.transactions:
-                row = [entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
+                row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
                 self.tree.insert("", tk.END, values=row)
 
         self.tree.pack(fill="both", expand=True)
 
     def refresh_table(self):
-        print(self.entry_id)
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
             transactions = file_data["Transactions"]
@@ -86,12 +88,31 @@ class Table(ctk.CTkScrollableFrame):
                 if entry in self.transactions:
                     print("no new entries")
                 else:
-                    row = [entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
+                    row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
                     self.transactions.append(entry)
                     self.tree.insert("", tk.END, values=row)
 
     def delete_entry(self):
-        pass
+        selected_entry = self.tree.selection()
+        entry_values = self.tree.item(selected_entry[0])['values']
+        selected_id = entry_values[0]
+
+        if selected_entry:
+
+            self.tree.delete(selected_entry[0])
+
+            with open("Transactions.json", "r+") as f:
+                file_data = json.load(f)
+                for entry in file_data["Transactions"]:
+                    if entry["id"] == selected_id:
+                        try:
+                            file_data["Transactions"].remove(entry)
+                            f.seek(0)
+                            json.dump(file_data, f, indent=4)
+                            f.truncate()
+                            print("entry deleted")
+                        except Exception as e:
+                            print(f"Error while deleting file {e}")
 
 
 class TransactionEngine(ctk.CTkFrame):
@@ -195,8 +216,8 @@ class TransactionEngine(ctk.CTkFrame):
 
                     json.dump(file_data, f, indent=4)
 
-                    row = [new_data["date"], new_data["user"], new_data["type"], new_data["category"], new_data["amount"],
-                           new_data["note"]]
+                    row = [new_data["id"], new_data["date"], new_data["user"], new_data["type"], new_data["category"],
+                           new_data["amount"], new_data["note"]]
 
                     self.parent.transactions.append(new_data)
                     self.parent.tree.insert("", tk.END, values=row)
