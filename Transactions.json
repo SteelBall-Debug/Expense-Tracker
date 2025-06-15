@@ -15,6 +15,30 @@
             "category": "Food",
             "amount": 70.0,
             "note": "eggs\n"
+        },
+        {
+            "date": "2025-06-10",
+            "user": "You",
+            "type": "Income",
+            "category": "misc",
+            "amount": 800.0,
+            "note": "fees\n"
+        },
+        {
+            "date": "2025-06-15",
+            "user": "You",
+            "type": "Expense",
+            "category": "entertainment",
+            "amount": 200.0,
+            "note": "ott apps\n"
+        },
+        {
+            "date": "2025-06-15",
+            "user": "You",
+            "type": "Income",
+            "category": "bills",
+            "amount": 2000.0,
+            "note": "scholarship\n"
         }
     ]
 }

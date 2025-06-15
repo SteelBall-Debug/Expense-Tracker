@@ -93,6 +93,7 @@ class TransactionEngine(ctk.CTkFrame):
 
         super().__init__(master=master, fg_color="#1054c2", width=500)
         self.create_grid()
+        self.parent = master
 
         # Add Transaction Button
         self.add_transaction = ctk.CTkButton(self, text="+", font=("", 25, "bold"), fg_color="#f51168", text_color="black",
@@ -185,5 +186,11 @@ class TransactionEngine(ctk.CTkFrame):
                     f.seek(0)
 
                     json.dump(file_data, f, indent=4)
+
+                    row = [new_data["date"], new_data["user"], new_data["type"], new_data["category"], new_data["amount"],
+                           new_data["note"]]
+
+                    self.parent.transactions.append(new_data)
+                    self.parent.tree.insert("", tk.END, values=row)
         else:
             print("please fill all the required fields")
