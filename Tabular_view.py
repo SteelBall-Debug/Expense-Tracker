@@ -173,7 +173,7 @@ class TransactionEngine(ctk.CTkFrame):
         ctk.CTkLabel(self, text="Date: ", text_color="black", font=("", 12, "bold")).grid(row=3, column=1, pady=10, padx=10, sticky="nsw")
         self.date.grid(row=3, column=1, sticky="nse", padx=10, pady=10, ipadx=10)
 
-        ctk.CTkLabel(self, text="Note: ", text_color="black", font=("", 12, "bold")).grid(row=4, column=1, pady=10, padx=10, sticky="nsw")
+        ctk.CTkLabel(self, text="Note: ", text_color="black", font=("", 10, "bold")).grid(row=4, column=1, pady=10, padx=10, sticky="nsw")
         self.note.grid(row=4, column=1, sticky="nse", padx=10, pady=10)
 
     def create_grid(self):

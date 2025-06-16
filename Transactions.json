@@ -17,6 +17,33 @@
             "category": "Food",
             "amount": 70.0,
             "note": "eggs\n"
+        },
+        {
+            "id": 3,
+            "date": "2025-06-16",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "amount": 400.0,
+            "note": "pizza\n"
+        },
+        {
+            "id": 4,
+            "date": "2025-06-16",
+            "user": "You",
+            "type": "Expense",
+            "category": "Food",
+            "amount": 12.0,
+            "note": "light snack\n"
+        },
+        {
+            "id": 5,
+            "date": "2025-06-16",
+            "user": "You",
+            "type": "Expense",
+            "category": "entertainment",
+            "amount": 100.0,
+            "note": "sample\n"
         }
     ]
 }
