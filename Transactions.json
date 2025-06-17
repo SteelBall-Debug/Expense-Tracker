@@ -44,6 +44,15 @@
             "category": "entertainment",
             "amount": 100.0,
             "note": "sample\n"
+        },
+        {
+            "id": 6,
+            "date": "2025-06-17",
+            "user": "You",
+            "type": "Income",
+            "category": "misc",
+            "amount": 2000.0,
+            "note": "stocks\n"
         }
     ]
 }
