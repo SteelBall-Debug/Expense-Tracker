@@ -1,6 +1,6 @@
 import json
 import customtkinter as ctk
-# updated this
+
 
 class Dashboard(ctk.CTkScrollableFrame):
 
@@ -16,6 +16,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.balance = None
         self.expenses = None
         self.budget = None
+        self.color = "black"
 
         self.create_cards()
         self.render_cards()
@@ -37,7 +38,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.columnconfigure(2, weight=1)
 
     def create_cards(self):
-        self.balance = Flashcard(self, "Balance", self.get_balance(), "#478af5")
+        self.balance = Flashcard(self, "Balance", self.get_balance(), "#478af5", text_color=self.color)
         self.expenses = Flashcard(self, "Expenses", self.get_expenses(), "#478af5")
         self.budget = Flashcard(self, "Budget", "0.0", "#478af5")
 
@@ -66,6 +67,10 @@ class Dashboard(ctk.CTkScrollableFrame):
                 if entry["type"] == "Income":
                     inc += entry["amount"]
             self.balance_value = inc - self.get_expenses()
+            if self.balance_value > 0:
+                self.color = "#0cf223"
+            elif self.balance_value < 0:
+                self.color = "red"
             return self.balance_value
 
     def refresh(self):
@@ -75,15 +80,13 @@ class Dashboard(ctk.CTkScrollableFrame):
 
 class Flashcard(ctk.CTkFrame):
 
-    def __init__(self, master, title, text, color):
+    def __init__(self, master, title, text, color, text_color="black"):
         super().__init__(master=master, fg_color=color)
         self.title = ctk.CTkLabel(self, text=title, font=("", 16, "bold"), text_color="black")
-        self.text = ctk.CTkLabel(self, text=text, font=("", 14, "bold"), text_color="black")
+        self.text = ctk.CTkLabel(self, text=text, font=("", 14, "bold"), text_color=text_color)
         self.display_text()
 
     def display_text(self):
         self.title.pack(padx=10, pady=5)
         self.text.pack(padx=10, pady=5)
 
-    def update_color(self, color):
-        self.text.configure(text_color=color)

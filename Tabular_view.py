@@ -18,13 +18,20 @@ class Table(ctk.CTkScrollableFrame):
         self.transactor.grid(row=0, column=0, sticky="nsw", pady=10)
 
         # Label
-        self.label = ctk.CTkLabel(self, text="Transaction Table", font=("Segoe UI", 24, "bold"))
+        self.label = ctk.CTkLabel(self, text="      Transaction Table", font=("Segoe UI", 24, "bold"))
         self.label.grid(row=1, column=0, sticky="n", pady=10)
 
         # Refresh Button
         self.transactions = None
-        self.refresh = ctk.CTkButton(self, text="↻", font=("", 24, "bold"), command=self.refresh_table)
+        self.refresh = ctk.CTkButton(self, text="↻", font=("", 24, "bold"), width=100, command=self.refresh_table)
         self.refresh.grid(row=1, column=0, sticky="nw", pady=10, padx=10)
+
+        # Filtration system
+        self.current_filter = ()
+        self.filter_values = ["Expense", "Income"]
+        self.filter_menu = ctk.CTkComboBox(self, values=self.filter_values, text_color="black", width=100, height=35, justify="center", fg_color="#478af5")
+        self.filter_menu.grid(row=1, column=0, sticky="nw", pady=10, padx=110)
+        self.filter_menu.set("☰")
 
         # Table view frame
         self.table_frame = ctk.CTkFrame(self, fg_color="black")
@@ -207,7 +214,7 @@ class TransactionEngine(ctk.CTkFrame):
                         "type": type_value,
                         "category": category,
                         "amount": amount,
-                        "note": note
+                        "note": note.lower()
                     }
 
                     file_data["Transactions"].append(new_data)
