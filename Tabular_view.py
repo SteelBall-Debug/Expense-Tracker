@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import font, ttk
 from tkcalendar import DateEntry
 import json
+from Utilities import Filterer
 # github is annoying
 
 
@@ -11,6 +12,7 @@ class Table(ctk.CTkScrollableFrame):
     def __init__(self, master):
 
         super().__init__(master=master)
+        self.parent = master
         self.create_grid()
 
         # Transactor inside a frame
@@ -28,10 +30,10 @@ class Table(ctk.CTkScrollableFrame):
 
         # Filtration system
         self.current_filter = ()
-        self.filter_values = ["Expense", "Income"]
-        self.filter_menu = ctk.CTkComboBox(self, values=self.filter_values, text_color="black", width=100, height=35, justify="center", fg_color="#478af5")
-        self.filter_menu.grid(row=1, column=0, sticky="nw", pady=10, padx=110)
-        self.filter_menu.set("☰")
+        self.toggle = False
+        self.filter_butt = ctk.CTkButton(self, text="☰", text_color="black", width=60, height=35, fg_color="#478af5", command=self.show_filter_menu)
+        self.filter_menu = Filterer(self.parent)
+        self.filter_butt.grid(row=1, column=0, sticky="nw", pady=10, padx=120)
 
         # Table view frame
         self.table_frame = ctk.CTkFrame(self, fg_color="black")
@@ -41,7 +43,7 @@ class Table(ctk.CTkScrollableFrame):
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=10)
 
-        self.delete_selected = ctk.CTkButton(self, text="Delete Selected", text_color="white", fg_color="#f51168", command=self.delete_entry)
+        self.delete_selected = ctk.CTkButton(self, text="Delete Selected", text_color="white", fg_color="#f51168", bg_color="#f51168", command=self.delete_entry)
         self.delete_selected.grid(row=1, column=0, sticky="ne", pady=10, padx=10)
 
         self.entry_id = 0
@@ -120,6 +122,15 @@ class Table(ctk.CTkScrollableFrame):
                             print("entry deleted")
                         except Exception as e:
                             print(f"Error while deleting file {e}")
+
+    def show_filter_menu(self):
+        if self.toggle:
+            self.filter_menu.grid_forget()
+            self.toggle = False
+        else:
+            self.filter_menu.grid(row=0, column=1)
+            self.filter_menu.lift()
+            self.toggle = True
 
 
 class TransactionEngine(ctk.CTkFrame):
