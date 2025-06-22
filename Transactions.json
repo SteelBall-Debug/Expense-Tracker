@@ -53,6 +53,15 @@
             "category": "misc",
             "amount": 2000.0,
             "note": "stocks\n"
+        },
+        {
+            "id": 8,
+            "date": "2025-06-20",
+            "user": "You",
+            "type": "Expense",
+            "category": "entertainment",
+            "amount": 10000.0,
+            "note": "sample\n"
         }
     ]
 }

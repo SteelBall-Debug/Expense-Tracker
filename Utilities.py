@@ -1,51 +1,63 @@
 import customtkinter as ctk
-import json
+from tkinter import font
+from tkcalendar import DateEntry
 
 
 class Filterer(ctk.CTkFrame):
+    def __init__(self, master, reset_callback=None):
+        super().__init__(master=master, width=200, height=300, fg_color="#1f1f1f")
 
-    def __init__(self, master, apply_callback=None, reset_callback=None):
-        super().__init__(master=master, width=200, height=250, fg_color="#1f1f1f")
+        self.table = master
 
-        self.apply_callback = apply_callback
         self.reset_callback = reset_callback
+        self.grid_propagate(False)  # Keeps the frame size fixed
 
+        # Configure 1 column layout
+        self.columnconfigure(0, weight=1)
+
+        # Title
         self.title = ctk.CTkLabel(self, text="Filter Transactions", font=("", 14, "bold"))
-        self.title.pack(pady=(10, 15), padx=20)
+        self.title.grid(row=0, column=0, pady=(10, 15), padx=20, sticky="ew")
 
-        self.date_entry = ctk.CTkEntry(self, placeholder_text="MM/DD/YYYY", width=180)
-        self.date_entry.pack(pady=5)
+        # Date Entry
+        my_font = font.Font(family="Arial", size=12, weight="bold")
+        self.date_entry = DateEntry(self, date_pattern="dd-mm-yyyy", font=my_font, width=18, height=9)
+        self.date_entry.grid(row=1, column=0, pady=5, padx=20, sticky="ew")
 
-        self.category_box = ctk.CTkComboBox(self, values=["Food", "clothing", "entertainment", "bills", "repairs", "misc"], width=180)
+        # Category
+        self.category_box = ctk.CTkComboBox(self, values=["Food", "Clothing", "Entertainment", "Bills", "Repairs", "Misc"], width=180)
         self.category_box.set("Select Category")
-        self.category_box.pack(pady=5)
+        self.category_box.grid(row=2, column=0, pady=5, padx=20, sticky="ew")
 
+        # Keyword
         self.keyword_entry = ctk.CTkEntry(self, placeholder_text="Keyword", width=180)
-        self.keyword_entry.pack(pady=5)
+        self.keyword_entry.grid(row=3, column=0, pady=5, padx=20, sticky="ew")
 
+        # Button Frame
         self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.button_frame.pack(pady=(10, 5))
+        self.button_frame.grid(row=4, column=0, pady=(10, 5), padx=20, sticky="ew")
 
         self.reset_btn = ctk.CTkButton(self.button_frame, text="Reset", width=80, command=self.on_reset)
-        self.apply_btn = ctk.CTkButton(self.button_frame, text="Apply", width=80, command=self.on_apply)
+        self.apply_btn = ctk.CTkButton(self.button_frame, text="Apply", width=80, command=self.apply)
+        self.button_frame.columnconfigure(0, weight=1)
+        self.button_frame.columnconfigure(1, weight=1)
         self.reset_btn.grid(row=0, column=0, padx=5)
         self.apply_btn.grid(row=0, column=1, padx=5)
 
-        self.pack_propagate(False)
-
-    def on_apply(self):
-        if self.apply_callback:
-            filters = {
-                "date": self.date_entry.get(),
-                "category": self.category_box.get(),
-                "keyword": self.keyword_entry.get()
-            }
-            self.apply_callback(filters)
-
     def on_reset(self):
-        self.date_entry.delete(0, 'end')
         self.category_box.set("Select Category")
         self.keyword_entry.delete(0, 'end')
         if self.reset_callback:
             self.reset_callback()
+
+    def apply(self):
+
+        date = str(self.date_entry.get_date())
+        cate = self.category_box.get()
+        note = self.keyword_entry.get()
+
+        if date:
+            print(date)
+            print(self.table.tree)
+
 
