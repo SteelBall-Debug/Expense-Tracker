@@ -5,7 +5,7 @@
             "date": "2025-06-09",
             "user": "You",
             "type": "Expense",
-            "category": "Food",
+            "category": "food",
             "amount": 200.0,
             "note": "milk\n"
         },
@@ -14,7 +14,7 @@
             "date": "2025-06-10",
             "user": "You",
             "type": "Expense",
-            "category": "Food",
+            "category": "food",
             "amount": 70.0,
             "note": "eggs\n"
         },
@@ -23,7 +23,7 @@
             "date": "2025-06-16",
             "user": "You",
             "type": "Expense",
-            "category": "Food",
+            "category": "food",
             "amount": 400.0,
             "note": "pizza\n"
         },
@@ -32,7 +32,7 @@
             "date": "2025-06-16",
             "user": "You",
             "type": "Expense",
-            "category": "Food",
+            "category": "food",
             "amount": 12.0,
             "note": "light snack\n"
         },

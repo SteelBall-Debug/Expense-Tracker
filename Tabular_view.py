@@ -32,7 +32,7 @@ class Table(ctk.CTkScrollableFrame):
         self.current_filter = ()
         self.toggle = False
         self.filter_butt = ctk.CTkButton(self, text="☰", text_color="black", width=60, height=35, fg_color="#478af5", command=self.show_filter_menu)
-        self.filter_menu = Filterer(self.parent)
+        self.filter_menu = Filterer(self.parent, self)
         self.filter_butt.grid(row=1, column=0, sticky="nw", pady=10, padx=120)
 
         # Table view frame
@@ -132,6 +132,10 @@ class Table(ctk.CTkScrollableFrame):
             self.filter_menu.lift()
             self.toggle = True
 
+    def clear_treeview(self):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
 
 class TransactionEngine(ctk.CTkFrame):
     def __init__(self, master):
@@ -221,9 +225,9 @@ class TransactionEngine(ctk.CTkFrame):
                     new_data = {
                         "id": num,
                         "date": date,
-                        "user": user_value,
+                        "user": user_value.lower(),
                         "type": type_value,
-                        "category": category,
+                        "category": category.lower(),
                         "amount": amount,
                         "note": note.lower()
                     }

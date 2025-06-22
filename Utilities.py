@@ -1,13 +1,14 @@
 import customtkinter as ctk
 from tkinter import font
 from tkcalendar import DateEntry
+import json
 
 
 class Filterer(ctk.CTkFrame):
-    def __init__(self, master, reset_callback=None):
+    def __init__(self, master, table, reset_callback=None):
         super().__init__(master=master, width=200, height=300, fg_color="#1f1f1f")
 
-        self.table = master
+        self.table = table
 
         self.reset_callback = reset_callback
         self.grid_propagate(False)  # Keeps the frame size fixed
@@ -52,12 +53,21 @@ class Filterer(ctk.CTkFrame):
 
     def apply(self):
 
-        date = str(self.date_entry.get_date())
+        filtered_list = []
+        # date = str(self.date_entry.get_date())
         cate = self.category_box.get()
         note = self.keyword_entry.get()
 
-        if date:
-            print(date)
-            print(self.table.tree)
+        if cate:
+            with open("Transactions.json", "r+") as f:
+                file_data = json.load(f)
+                transactions = file_data['Transactions']
+                self.table.clear_treeview()
 
+                for entry in transactions:
+                    if entry["category"] == cate.lower():
+                        filtered_list.append(entry)
+                        row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"],
+                               entry["amount"], entry["note"]]
+                        self.table.tree.insert("", ctk.END, values=row)
 
