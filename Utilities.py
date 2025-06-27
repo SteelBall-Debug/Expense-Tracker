@@ -30,20 +30,28 @@ class Filterer(ctk.CTkFrame):
         self.category_box.set("Select Category")
         self.category_box.grid(row=2, column=0, pady=5, padx=20, sticky="ew")
 
+        # Users
+        self.user_list = self.table.transactor.user_values
+        self.users = ctk.CTkComboBox(self, values=self.user_list, width=180)
+        self.users.set("Select User")
+        self.users.grid(row=3, column=0, pady=5, padx=20, sticky="ew")
+
         # Keyword
         self.keyword_entry = ctk.CTkEntry(self, placeholder_text="Keyword", width=180)
-        self.keyword_entry.grid(row=3, column=0, pady=5, padx=20, sticky="ew")
+        self.keyword_entry.grid(row=4, column=0, pady=5, padx=20, sticky="ew")
 
         # Button Frame
         self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.button_frame.grid(row=4, column=0, pady=(10, 5), padx=20, sticky="ew")
+        self.button_frame.grid(row=5, column=0, pady=(10, 5), padx=20, sticky="ew")
 
         self.reset_btn = ctk.CTkButton(self.button_frame, text="Reset", width=80, command=self.on_reset)
-        self.apply_btn = ctk.CTkButton(self.button_frame, text="Apply", width=80, command=self.apply)
+        self.apply_btn = ctk.CTkButton(self.button_frame, text="Apply", width=80, command=self.apply_filters)
         self.button_frame.columnconfigure(0, weight=1)
         self.button_frame.columnconfigure(1, weight=1)
         self.reset_btn.grid(row=0, column=0, padx=5)
         self.apply_btn.grid(row=0, column=1, padx=5)
+
+        self.filter_list = []
 
     def on_reset(self):
         self.category_box.set("Select Category")
@@ -51,23 +59,27 @@ class Filterer(ctk.CTkFrame):
         if self.reset_callback:
             self.reset_callback()
 
-    def apply(self):
+    def apply_filters(self):
+        with open("Transactions.json", "r") as f:
+            data = json.load(f)["Transactions"]
 
-        filtered_list = []
-        # date = str(self.date_entry.get_date())
-        cate = self.category_box.get()
-        note = self.keyword_entry.get()
+        # date = self.date_entry.get().strip()
+        category = self.category_box.get().strip().lower()
+        user = self.users.get().strip().lower()
+        keyword = self.keyword_entry.get().strip().lower()
 
-        if cate:
-            with open("Transactions.json", "r+") as f:
-                file_data = json.load(f)
-                transactions = file_data['Transactions']
-                self.table.clear_treeview()
+        filtered = []
+        for entry in data:
+            if category != "select category" and category != entry["category"].lower():
+                continue
+            if keyword and keyword not in entry["note"].lower():
+                continue
+            if user and user not in entry["user"].lower():
+                continue
+            filtered.append(entry)
 
-                for entry in transactions:
-                    if entry["category"] == cate.lower():
-                        filtered_list.append(entry)
-                        row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"],
-                               entry["amount"], entry["note"]]
-                        self.table.tree.insert("", ctk.END, values=row)
-
+        # Clear and repopulate
+        self.table.clear_treeview()
+        for entry in filtered:
+            self.table.tree.insert("", "end", values=([entry["id"], entry["date"], entry["user"], entry["type"], entry["category"],
+                                                       entry["amount"], entry["note"]]))

@@ -149,7 +149,7 @@ class TransactionEngine(ctk.CTkFrame):
                                              command=self.get_values)
 
         # Users Combo-Box
-        self.user_values = ['You']
+        self.user_values = ['You', 'John', 'Jane']
         self.users = ctk.CTkComboBox(master=self, values=self.user_values, height=40, width=200, justify="center",
                                      fg_color="#478af5", text_color="black")
 
