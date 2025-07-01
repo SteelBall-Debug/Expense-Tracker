@@ -21,7 +21,7 @@ class App(ctk.CTk):
         self.title(title)
         self.geometry(f'{size[0]}x{size[1]}')
 
-        self.heatmap = Heatmap(self)
+        self.heatmap = Heatmap(self, "date", None, None)
         self.heatmap.pack(pady=90)
 
         self.mainloop()
@@ -29,7 +29,7 @@ class App(ctk.CTk):
 
 class Heatmap(ctk.CTkScrollableFrame):
 
-    def __init__(self, master, start_date, color_gradient):
+    def __init__(self, master, start_date, freq_table,color_gradient=None):
 
         # main-setup
         super().__init__(master=master, fg_color="black", width=400, height=150, orientation="horizontal",
@@ -38,8 +38,14 @@ class Heatmap(ctk.CTkScrollableFrame):
         # Starting Date for Calendar
         self.start_date = start_date
 
+        # Frequency Table { "Date" , "frequency", "meta-data"}
+        self.freq_table = freq_table
+
         # Default colour gradient [Github style Green]
-        self.default_color_gradient = ["#0c0d0d", "#7bc96f", "#239a3b", "#196127"]
+        if not color_gradient:
+            self.color_gradient = ["#0c0d0d", "#7bc96f", "#239a3b", "#196127"]
+        else:
+            self.color_gradient = color_gradient
 
         self.create_buttons()
 
