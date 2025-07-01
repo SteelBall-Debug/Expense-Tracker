@@ -53,6 +53,10 @@ class Filterer(ctk.CTkFrame):
 
         self.filter_list = []
 
+        # exit button
+        self.exit = ctk.CTkButton(self, text="x", fg_color="#1f1f1f", bg_color="#1f1f1f", text_color="white", hover_color="red", command=self.table.show_filter_menu, width=3)
+        self.exit.grid(row=0, column=0, sticky="ne")
+
     def on_reset(self):
         self.category_box.set("Select Category")
         self.keyword_entry.delete(0, 'end')
