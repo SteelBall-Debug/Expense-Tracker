@@ -89,7 +89,8 @@ class Heatmap(ctk.CTkScrollableFrame):
                 # Clamp count to max 3
                 value = min(count, 4)
 
-                color = self.color_gradient[value]
+                index = min(3, max(0, int(value)))
+                color = self.color_gradient[index]
 
                 btn = ctk.CTkButton(
                     self,
