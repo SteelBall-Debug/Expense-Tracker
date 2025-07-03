@@ -115,7 +115,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=5)
         self.indicator_title.configure(text=self.heatmap.last_clicked)
 
-
+# what
 class Flashcard(ctk.CTkFrame):
 
     def __init__(self, master, title, text, color, text_color="black"):
