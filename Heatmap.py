@@ -39,20 +39,25 @@ class App(ctk.CTk):
 
         self.mainloop()
 
+# orientation="horizontal",
+#                          scrollbar_button_color="#1b1c1c"
 
-class Heatmap(ctk.CTkScrollableFrame):
+
+class Heatmap(ctk.CTkFrame):
 
     def __init__(self, master, start_date, freq_table, color_gradient=None):
 
         # main-setup
-        super().__init__(master=master, fg_color="black", width=400, height=150, orientation="horizontal",
-                         scrollbar_button_color="#1b1c1c")
+        super().__init__(master=master, fg_color="black", width=600, height=250)
 
         # Starting Date for Calendar
         self.start_date = start_date
 
         # Frequency Table { "Date" , "frequency", "meta-data"}
         self.freq_table = freq_table
+
+        # stores last clicked value
+        self.last_clicked = ""
 
         # Default colour gradient [Github style Green]
         if not color_gradient:
@@ -62,6 +67,7 @@ class Heatmap(ctk.CTkScrollableFrame):
 
         self.add_month_labels()
         self.create_buttons()
+        self.add_color_index()
 
     def add_month_labels(self):
         month_labels = {}
@@ -80,7 +86,7 @@ class Heatmap(ctk.CTkScrollableFrame):
     def create_buttons(self):
 
         for week in range(52):
-            for day in range(1, 7):
+            for day in range(1, 8):
                 grid_date = (self.start_date + timedelta(days=week * 7 + day)).strftime("%Y-%m-%d")
 
                 # Get count if exists, else 0
@@ -107,7 +113,21 @@ class Heatmap(ctk.CTkScrollableFrame):
 
     def handle_click(self, date, value):
         print(f"Clicked on {date} with Transactions: {value}")
+        result = f"Clicked on {date} with Transactions: {value}"
+        self.last_clicked = result
+        return result
+
+    def add_color_index(self):
+        less = ctk.CTkLabel(self, text="Less", font=("", 10, "bold"))
+        less.grid(row=8, column=45)
+        col = 46
+        for color in self.color_gradient:
+            f = ctk.CTkFrame(self, width=16, height=16, fg_color=color)
+            f.grid(row=8, column=col, padx=1, pady=1)
+            col += 1
+        more = ctk.CTkLabel(self, text="More", font=("", 10, "bold"))
+        more.grid(row=8, column=50)
 
 
 if __name__ == "__main__":
-    App("Heatmap", (600, 400))
+    App("Heatmap", (1300, 400))
