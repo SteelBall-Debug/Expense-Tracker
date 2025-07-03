@@ -1,8 +1,7 @@
 import json
 import customtkinter as ctk
-import calendar
 import pandas as pd
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from Heatmap import Heatmap
 
 
@@ -45,7 +44,13 @@ class Dashboard(ctk.CTkScrollableFrame):
             self.frequency_table = df[["date"]].value_counts()
 
         self.heatmap = Heatmap(self, self.start_date, self.frequency_table, None)
-        self.heatmap.grid(row=2, column=0, sticky="nsew", padx=20, pady=10)
+        self.heatmap.grid(row=2, column=0, sticky="nsw", padx=20, pady=10)
+
+        self.indicator = ctk.CTkFrame(self, width=300, height=15, fg_color="black")
+        # self.indicator.grid_propagate(False)
+        self.indicator_title = ctk.CTkLabel(self.indicator, text=self.heatmap.last_clicked, text_color="white")
+        self.indicator_title.grid(row=0, column=0, pady=10)
+        self.show_indicator()
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -67,8 +72,8 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.description_frame.columnconfigure(2, weight=1)
 
     def create_cards(self):
-        self.balance = Flashcard(self.description_frame, "Balance", self.get_balance(), "#478af5", text_color=self.color)
-        self.expenses = Flashcard(self.description_frame, "Expenses", self.get_expenses(), "#478af5")
+        self.balance = Flashcard(self.description_frame, "Balance", round(self.get_balance(), 2), "#478af5", text_color=self.color)
+        self.expenses = Flashcard(self.description_frame, "Expenses",  round(self.get_expenses(), 2), "#478af5")
         self.budget = Flashcard(self.description_frame, "Budget", "0.0", "#478af5")
 
     def render_cards(self):
@@ -105,6 +110,10 @@ class Dashboard(ctk.CTkScrollableFrame):
     def refresh(self):
         self.create_cards()
         self.render_cards()
+
+    def show_indicator(self):
+        self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=5)
+        self.indicator_title.configure(text=self.heatmap.last_clicked)
 
 
 class Flashcard(ctk.CTkFrame):
