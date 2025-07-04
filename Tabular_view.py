@@ -233,7 +233,6 @@ class TransactionEngine(ctk.CTkFrame):
                     }
 
                     file_data["Transactions"].append(new_data)
-
                     f.seek(0)
 
                     json.dump(file_data, f, indent=4)
