@@ -28,19 +28,44 @@ class App(ctk.CTk):
         current_year = datetime.now().year
         start_date = date(current_year, 1, 1)
 
-        with open("Transactions.json", "r+") as f:
+        with open("Transactions.json", "r") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
             frequency_table = df[["date"]].value_counts()
 
+        with open("Cache.json", "r+") as f:
+            file_data = json.load(f)
+            id_data = file_data["id_lookup"]
+            if id_data:
+                pass
+            else:
+                new_data = self.update_cache()
+                file_data["id_lookup"].update(new_data)
+
+                f.seek(0)
+                json.dump(file_data, f, indent=4)
+
         self.heatmap = Heatmap(self, start_date, frequency_table, None)
         self.heatmap.pack(pady=90)
+        self.indicator_title = ctk.CTkLabel(self, text="")
+        # self.mainloop()
 
-        self.mainloop()
-
-# orientation="horizontal",
-#                          scrollbar_button_color="#1b1c1c"
+    def update_cache(self):
+        with open("Transactions.json", "r") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            date_to_ids = {}
+            for row in df.itertuples(index=False):
+                date_val = row.date
+                tx_id = row.id
+                # print(f"{date_val} : {tx_id}")
+                if date_val not in date_to_ids:
+                    date_to_ids[date_val] = []
+                date_to_ids[date_val].append(tx_id)
+            return date_to_ids
+# orientation="horizontal",scrollbar_button_color="#1b1c1c"
 
 
 class Heatmap(ctk.CTkFrame):
@@ -50,6 +75,8 @@ class Heatmap(ctk.CTkFrame):
         # main-setup
         super().__init__(master=master, fg_color="black", width=600, height=250)
 
+        self.parent = master
+
         # Starting Date for Calendar
         self.start_date = start_date
 
@@ -57,11 +84,11 @@ class Heatmap(ctk.CTkFrame):
         self.freq_table = freq_table
 
         # stores last clicked value
-        self.last_clicked = ""
+        self.last_clicked = ''
 
         # Default colour gradient [Github style Green]
         if not color_gradient:
-            self.color_gradient = ["#0c0d0d", "#7bc96f", "#239a3b", "#196127"]
+            self.color_gradient = ["#242222", "#7bc96f", "#239a3b", "#196127"]
         else:
             self.color_gradient = color_gradient
 
@@ -112,10 +139,10 @@ class Heatmap(ctk.CTkFrame):
                 btn.grid(row=day, column=week, padx=1, pady=1)
 
     def handle_click(self, date, value):
-        print(f"Clicked on {date} with Transactions: {value}")
+        # print(f"Clicked on {date} with Transactions: {value}")
         result = f"Clicked on {date} with Transactions: {value}"
         self.last_clicked = result
-        return result
+        self.parent.indicator_title.configure(text=result)
 
     def add_color_index(self):
         less = ctk.CTkLabel(self, text="Less", font=("", 10, "bold"))
