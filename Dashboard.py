@@ -46,11 +46,12 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.heatmap = Heatmap(self, self.start_date, self.frequency_table, None)
         self.heatmap.grid(row=2, column=0, sticky="nsw", padx=20, pady=10)
 
-        self.indicator = ctk.CTkFrame(self, width=300, height=15, fg_color="black")
-        # self.indicator.grid_propagate(False)
-        self.indicator_title = ctk.CTkLabel(self.indicator, text=self.heatmap.last_clicked, text_color="white")
-        self.indicator_title.grid(row=0, column=0, pady=10)
-        self.show_indicator()
+        self.indicator = ctk.CTkFrame(self, width=300, height=40, fg_color="black")
+        self.indicator.grid_propagate(False)
+        self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=1)
+
+        self.indicator_title = ctk.CTkLabel(self.indicator, text="click value returned here", text_color="white")
+        self.indicator_title.grid(row=0, column=1, sticky="ns", padx=10)
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -112,10 +113,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.render_cards()
 
     def show_indicator(self):
-        self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=5)
         self.indicator_title.configure(text=self.heatmap.last_clicked)
 
-# what
+
 class Flashcard(ctk.CTkFrame):
 
     def __init__(self, master, title, text, color, text_color="black"):
