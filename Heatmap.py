@@ -3,7 +3,7 @@
 #    1. Use pandas library, value_counts() function to get frequency of transactions occurred on dates
 #    2. Use frequency data to create a cache file that stores dates along with transaction ID's and frequency of
 #    Transactions.
-#    3. Use said "cache" file to assign color values to the generated buttons
+#    3. Use said "cache" file to assign color values to the generated buttons  *
 #    4. Write function to fetch transactions using ID's stored in Cache File
 #    5. Hook Said function to buttons using lambda function [refer test.py file]
 #    6. Don't forget to be hungry
@@ -143,6 +143,28 @@ class Heatmap(ctk.CTkFrame):
         result = f"Clicked on {date} with Transactions: {value}"
         self.last_clicked = result
         self.parent.indicator_title.configure(text=result)
+        if value == 0:
+            self.parent.indicator.configure(height=70)
+            self.parent.indicator_text.grid(row=1, column=1, sticky="ns", padx=10)
+        else:
+            self.parent.clear_table()
+            self.parent.setup_table()
+            with open("Cache.json", "r+") as f:
+                file_data = json.load(f)
+                id_data = file_data["id_lookup"]
+                if date in id_data.keys():
+                    ids = id_data[date]
+                    with open("Transactions.json", "r+") as trans:
+                        file_data = json.load(trans)
+                        transactions = file_data["Transactions"]
+                        for entry in transactions:
+                            for i in ids:
+                                if entry["id"] == i:
+                                    row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"],
+                                           entry["amount"], entry["note"]]
+                                    self.parent.mini_tree.insert("", ctk.END, values=row)
+
+            #self.parent.indicator_text.configure(text=ids)
 
     def add_color_index(self):
         less = ctk.CTkLabel(self, text="Less", font=("", 10, "bold"))

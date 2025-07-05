@@ -2,6 +2,7 @@ import json
 import customtkinter as ctk
 import pandas as pd
 from datetime import date, datetime
+from tkinter import ttk
 from Heatmap import Heatmap
 
 
@@ -52,6 +53,12 @@ class Dashboard(ctk.CTkScrollableFrame):
 
         self.indicator_title = ctk.CTkLabel(self.indicator, text="click value returned here", text_color="white")
         self.indicator_title.grid(row=0, column=1, sticky="ns", padx=10)
+
+        self.indicator_text = ctk.CTkLabel(self.indicator, text="No transactions", text_color="white")
+
+        # mini tree-view
+        self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
+        self.mini_tree = ttk.Treeview(self, columns=self.columns, show="headings", height=10)
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -114,6 +121,35 @@ class Dashboard(ctk.CTkScrollableFrame):
 
     def show_indicator(self):
         self.indicator_title.configure(text=self.heatmap.last_clicked)
+
+    def clear_table(self):
+        for item in self.mini_tree.get_children():
+            self.mini_tree.delete(item)
+
+    def setup_table(self):
+        for column in self.columns:
+            self.mini_tree.heading(column, text=column)
+            self.mini_tree.column(column, anchor="center", width=200)
+
+        # Style Treeview
+        style = ttk.Style()
+        style.theme_use("default")
+        # enlarge row size and font
+        style.configure("Treeview",
+                        background="#2b2b2b",
+                        foreground="white",
+                        rowheight=40,
+                        fieldbackground="#2b2b2b",
+                        font=("Segoe UI", 14))
+        # style Header cells
+        style.configure("Treeview.Heading",
+                        background="#1054c2",  # <-- Header background
+                        foreground="white",  # <-- Header text color
+                        font=("Segoe UI", 14, "bold"))
+        style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
+        style.map('Treeview', background=[('selected', '#1f6aa5')])
+
+        self.mini_tree.grid(row=4, column=0, sticky="nw", padx=20, pady=1)
 
 
 class Flashcard(ctk.CTkFrame):
