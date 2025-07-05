@@ -133,7 +133,7 @@ class Heatmap(ctk.CTkFrame):
                     fg_color=color,
                     corner_radius=6,
                     border_width=0,
-                    command=lambda d=grid_date, v=value: self.handle_click(d, v)
+                    command=lambda d=grid_date, v=count: self.handle_click(d, v)
                 )
 
                 btn.grid(row=day, column=week, padx=1, pady=1)
@@ -144,9 +144,12 @@ class Heatmap(ctk.CTkFrame):
         self.last_clicked = result
         self.parent.indicator_title.configure(text=result)
         if value == 0:
-            self.parent.indicator.configure(height=70)
+            self.parent.indicator.configure(height=70, width=360)
             self.parent.indicator_text.grid(row=1, column=1, sticky="ns", padx=10)
+            self.parent.mini_tree.grid_forget()
         else:
+            self.parent.indicator.configure(height=40)
+            self.parent.indicator_text.grid_forget()
             self.parent.clear_table()
             self.parent.setup_table()
             with open("Cache.json", "r+") as f:

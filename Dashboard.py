@@ -51,14 +51,18 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.indicator.grid_propagate(False)
         self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=1)
 
-        self.indicator_title = ctk.CTkLabel(self.indicator, text="click value returned here", text_color="white")
+        self.indicator_title = ctk.CTkLabel(self.indicator, text="click value returned here", text_color="white",
+                                            font=("", 16, "bold"))
         self.indicator_title.grid(row=0, column=1, sticky="ns", padx=10)
 
-        self.indicator_text = ctk.CTkLabel(self.indicator, text="No transactions", text_color="white")
+        self.indicator_text = ctk.CTkLabel(self.indicator, text="No transactions", text_color="red")
 
         # mini tree-view
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.mini_tree = ttk.Treeview(self, columns=self.columns, show="headings", height=10)
+
+        # placeholder frame
+        self.frame = ctk.CTkFrame(self)
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -149,7 +153,8 @@ class Dashboard(ctk.CTkScrollableFrame):
         style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
         style.map('Treeview', background=[('selected', '#1f6aa5')])
 
-        self.mini_tree.grid(row=4, column=0, sticky="nw", padx=20, pady=1)
+        self.mini_tree.grid(row=4, column=0, sticky="nsew", padx=20, pady=1)
+        self.frame.grid(row=5, column=0, sticky="nsew")
 
 
 class Flashcard(ctk.CTkFrame):
