@@ -899,6 +899,24 @@
             "category": "food",
             "amount": 1238.21,
             "note": "eggs\n"
+        },
+        {
+            "id": 101,
+            "date": "2025-07-02",
+            "user": "you",
+            "type": "Expense",
+            "category": "entertainment",
+            "amount": 10000.0,
+            "note": "dinner date\n"
+        },
+        {
+            "id": 102,
+            "date": "2025-07-08",
+            "user": "jane",
+            "type": "Expense",
+            "category": "misc",
+            "amount": 1000.0,
+            "note": "makeup\n"
         }
     ]
 }

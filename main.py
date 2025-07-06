@@ -26,7 +26,7 @@ class App(ctk.CTk):
         self.dashboard = Dashboard(self)
 
         # Tabular-View
-        self.table_view = Table(self)
+        self.table_view = Table(self, self.dashboard)
 
         # Settings
         self.settings = Settings(self)
