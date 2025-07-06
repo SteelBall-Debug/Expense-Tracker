@@ -122,6 +122,7 @@ class Dashboard(ctk.CTkScrollableFrame):
     def refresh(self):
         self.create_cards()
         self.render_cards()
+        self.update_heatmap()
 
     def show_indicator(self):
         self.indicator_title.configure(text=self.heatmap.last_clicked)
@@ -135,26 +136,34 @@ class Dashboard(ctk.CTkScrollableFrame):
             self.mini_tree.heading(column, text=column)
             self.mini_tree.column(column, anchor="center", width=200)
 
-        # Style Treeview
-        style = ttk.Style()
-        style.theme_use("default")
-        # enlarge row size and font
-        style.configure("Treeview",
-                        background="#2b2b2b",
-                        foreground="white",
-                        rowheight=40,
-                        fieldbackground="#2b2b2b",
-                        font=("Segoe UI", 14))
-        # style Header cells
-        style.configure("Treeview.Heading",
-                        background="#1054c2",  # <-- Header background
-                        foreground="white",  # <-- Header text color
-                        font=("Segoe UI", 14, "bold"))
-        style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
-        style.map('Treeview', background=[('selected', '#1f6aa5')])
-
         self.mini_tree.grid(row=4, column=0, sticky="nsew", padx=20, pady=1)
-        self.frame.grid(row=5, column=0, sticky="nsew")
+
+    def update_heatmap(self):
+        with open("Transactions.json", "r+") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            self.frequency_table = df[["date"]].value_counts()
+            self.heatmap.refresh(self.frequency_table)
+
+            date_to_ids = {}
+            for row in df.itertuples(index=False):
+                date_val = row.date
+                tx_id = row.id
+                # print(f"{date_val} : {tx_id}")
+                if date_val not in date_to_ids:
+                    date_to_ids[date_val] = []
+                date_to_ids[date_val].append(tx_id)
+            self.update_cache(date_to_ids)
+
+    def update_cache(self, new_data):
+        with open("Cache.json", "r+") as f:
+            file_data = json.load(f)
+            new_data = new_data
+            file_data["id_lookup"].update(new_data)
+
+            f.seek(0)
+            json.dump(file_data, f, indent=4)
 
 
 class Flashcard(ctk.CTkFrame):

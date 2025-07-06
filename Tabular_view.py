@@ -9,10 +9,11 @@ from Utilities import Filterer
 
 class Table(ctk.CTkScrollableFrame):
 
-    def __init__(self, master):
+    def __init__(self, master, dashboard):
 
         super().__init__(master=master)
         self.parent = master
+        self.dashboard = dashboard
         self.create_grid()
 
         # Transactor inside a frame
@@ -242,6 +243,9 @@ class TransactionEngine(ctk.CTkFrame):
 
                     self.parent.transactions.append(new_data)
                     self.parent.tree.insert("", tk.END, values=row)
+
+                    # update heatmap
+                    self.parent.dashboard.update_heatmap()
 
                     # update entry id
                     self.parent.entry_id += 1

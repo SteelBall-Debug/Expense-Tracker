@@ -148,7 +148,7 @@ class Heatmap(ctk.CTkFrame):
             self.parent.indicator_text.grid(row=1, column=1, sticky="ns", padx=10)
             self.parent.mini_tree.grid_forget()
         else:
-            self.parent.indicator.configure(height=40)
+            self.parent.indicator.configure(height=40, width=360)
             self.parent.indicator_text.grid_forget()
             self.parent.clear_table()
             self.parent.setup_table()
@@ -167,8 +167,6 @@ class Heatmap(ctk.CTkFrame):
                                            entry["amount"], entry["note"]]
                                     self.parent.mini_tree.insert("", ctk.END, values=row)
 
-            #self.parent.indicator_text.configure(text=ids)
-
     def add_color_index(self):
         less = ctk.CTkLabel(self, text="Less", font=("", 10, "bold"))
         less.grid(row=8, column=45)
@@ -179,6 +177,10 @@ class Heatmap(ctk.CTkFrame):
             col += 1
         more = ctk.CTkLabel(self, text="More", font=("", 10, "bold"))
         more.grid(row=8, column=50)
+
+    def refresh(self, f_table):
+        self.freq_table = f_table
+        self.create_buttons()
 
 
 if __name__ == "__main__":
