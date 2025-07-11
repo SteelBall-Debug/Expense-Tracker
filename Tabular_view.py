@@ -164,7 +164,7 @@ class TransactionEngine(ctk.CTkFrame):
                                     fg_color="#478af5", text_color="black")
 
         # Category Combo-Box
-        self.categories = ["Food", "clothing", "entertainment", "bills", "repairs", "misc"]
+        self.categories = ["food", "clothing", "entertainment", "bills", "repairs", "misc"]
         self.category = ctk.CTkComboBox(master=self, values=self.categories, height=40, width=200, justify="center"
                                         , fg_color="#478af5", text_color="black")
 

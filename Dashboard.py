@@ -4,6 +4,9 @@ import pandas as pd
 from datetime import date, datetime
 from tkinter import ttk
 from Heatmap import Heatmap
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import seaborn as sns
 
 
 class Dashboard(ctk.CTkScrollableFrame):
@@ -63,6 +66,8 @@ class Dashboard(ctk.CTkScrollableFrame):
 
         # placeholder frame
         self.frame = ctk.CTkFrame(self)
+        self.graphs = Graph(self)
+        self.graphs.grid(row=5, column=0, sticky="nsew")
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -123,6 +128,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.create_cards()
         self.render_cards()
         self.update_heatmap()
+        self.graphs.destroy()
+        self.graphs = Graph(self)
+        self.graphs.grid(row=5, column=1, sticky="nsew")
 
     def show_indicator(self):
         self.indicator_title.configure(text=self.heatmap.last_clicked)
@@ -178,3 +186,98 @@ class Flashcard(ctk.CTkFrame):
         self.title.pack(padx=10, pady=5)
         self.text.pack(padx=10, pady=5)
 
+
+class Graph(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master=master)
+
+        # Pie Chart (Category Data)
+        df = self.category_expenses()
+        plt.style.use("dark_background")
+        fig1, ax1 = plt.subplots(figsize=(4, 4))
+        ax1.pie(df["Total"], labels=df["Category"], autopct='%1.1f%%')
+        ax1.set_title("Category-wise Expenses")
+        fig1.set_facecolor('#262625')
+        self.plot_to_ctk(fig1).pack(padx=10, pady=10, side="left")
+
+        # Line Chart (Income and Expense Data)
+        fig2, ax2 = plt.subplots(figsize=(7, 5))
+        income = self.income_data()
+        expense = self.expense_data()
+        income["amount"].plot(ax=ax2, label="Income", marker="o")
+        expense["amount"].plot(ax=ax2, label="Expense", marker="x")
+        ax2.set_title("Income vs Expense")
+        ax2.set_ylabel("Amount")
+        ax2.legend()
+        fig2.set_facecolor('#262625')
+        self.plot_to_ctk(fig2).pack(padx=10, pady=10, side="left")
+
+        # Bar chart (User Data)
+        df = self.user_expenses()
+        fig3, ax3 = plt.subplots(figsize=(7, 5))
+        sns.barplot(data=df, x="Users", y="Total", hue="Users", legend=False)
+        fig3.set_facecolor('#262625')
+        ax3.set_title("Total Spend by Users")
+        self.plot_to_ctk(fig3).pack(padx=10, pady=10, side="left")
+
+    def user_expenses(self):
+        cf = pd.DataFrame({'Users': [], 'Total': []})
+        cat_label = ['You', 'Jane', "John"]
+        with open("Transactions.json", "r+") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            df = df.query('type == "Expense"')
+
+            for label in cat_label:
+                temp = df.query(f'user == "{label}"')
+                total = temp["amount"].sum()
+                new_row = {'Users': label, 'Total': total}
+                cf = cf._append(new_row, ignore_index=True)
+
+        return cf
+
+    def income_data(self):
+        with open("Transactions.json", "r+") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            income_df = df.query('type == "Income"')
+            return income_df
+
+    def expense_data(self):
+        with open("Transactions.json", "r+") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            expense_df = df.query('type == "Expense"')
+            return expense_df
+
+    def category_expenses(self):
+        cf = pd.DataFrame({'Category': [], 'Total': []})
+        cat_label = ["food", "clothing", "entertainment", "bills", "repairs", "misc"]
+        with open("Transactions.json", "r+") as f:
+            file_data = json.load(f)
+            data = file_data["Transactions"]
+            df = pd.DataFrame(data)
+            df = df.query('type == "Expense"')
+
+            for label in cat_label:
+                temp = df.query(f'category == "{label}"')
+                total = temp["amount"].sum()
+                new_row = {'Category': label, 'Total': total}
+                cf = cf._append(new_row, ignore_index=True)
+
+        return cf
+
+    def plot_to_ctk(self, fig):
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.draw()
+        widget = canvas.get_tk_widget()
+        return widget
+
+    def on_close(self):
+        # Destroy the window properly
+        self.destroy()
+        # Optional: also quit if you use .mainloop() externally
+        self.quit()

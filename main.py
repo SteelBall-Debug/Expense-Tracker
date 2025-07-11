@@ -24,6 +24,8 @@ class App(ctk.CTk):
 
         # Dashboard
         self.dashboard = Dashboard(self)
+        # DESTROYS graphs on exiting the app
+        self.protocol("WM_DELETE_WINDOW", self.dashboard.graphs.on_close)
 
         # Tabular-View
         self.table_view = Table(self, self.dashboard)
