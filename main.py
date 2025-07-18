@@ -19,7 +19,7 @@ class App(ctk.CTk):
         self.grid()
 
         # Sidebar
-        self.sidebar = Sidebar(self, "#1054c2")
+        self.sidebar = Sidebar(self, "#159947")
         self.sidebar.grid(row=0, column=0, sticky="nsew")
 
         # Dashboard
@@ -28,10 +28,12 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.dashboard.graphs.on_close)
 
         # Tabular-View
-        self.table_view = Table(self, self.dashboard)
+        # self.table_view = Table(self, self.dashboard)
 
         # Settings
-        self.settings = Settings(self)
+        # self.settings = Settings(self)
+
+        self.grid_dash()
 
         self.mainloop()
 
@@ -55,7 +57,7 @@ class App(ctk.CTk):
 
 class Sidebar(ctk.CTkFrame):
 
-    def __init__(self, master, color):         # #478af5 - light blue for buttons
+    def __init__(self, master, color):         # #478af5 - light blue for buttons, #1054c2 - sidebar
 
         super().__init__(master, fg_color=color, bg_color=color)
         self.parent = master
@@ -73,13 +75,13 @@ class Sidebar(ctk.CTkFrame):
         self.grid_rowconfigure(6, weight=1)
 
     def create_widgets(self):
-        dash_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Dashboard", command=self.parent.grid_dash)
+        dash_button = ctk.CTkButton(master=self, fg_color="#49b265", hover_color="#1f5f5b", text="Dashboard", command=self.parent.grid_dash, text_color="#ffffff", font=("", 16, "bold"))
         dash_button.grid(row=1, column=0, sticky="nsew", pady=5, padx=5)
 
-        table_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Table-view", command=self.parent.grid_table)
+        table_button = ctk.CTkButton(master=self, fg_color="#49b265", hover_color="#1f5f5b", text="Table-view", command=self.parent.grid_table, text_color="#ffffff", font=("", 16, "bold"))
         table_button.grid(row=2, column=0, sticky="nsew", pady=5, padx=5)
 
-        settings_button = ctk.CTkButton(master=self, fg_color="#478af5", text="Settings", command=self.parent.grid_settings)
+        settings_button = ctk.CTkButton(master=self, fg_color="#49b265", hover_color="#1f5f5b", text="Settings", command=self.parent.grid_settings, text_color="#ffffff", font=("", 16, "bold"))
         settings_button.grid(row=3, column=0, sticky="nsew", pady=5, padx=5)
 
 

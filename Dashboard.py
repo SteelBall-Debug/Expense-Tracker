@@ -13,12 +13,12 @@ class Dashboard(ctk.CTkScrollableFrame):
 
     def __init__(self, master):
 
-        super().__init__(master=master)
+        super().__init__(master=master, fg_color="#090a14",  bg_color="#090a14")
         self.main_label()
         self.create_grid()
 
         # divider frame
-        self.description_frame = ctk.CTkFrame(self)
+        self.description_frame = ctk.CTkFrame(self, fg_color="#090a14")
         self.description_frame_grid()
         self.description_frame.grid(row=1, column=0, sticky="nsew", pady=10)
 
@@ -28,13 +28,13 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.balance = None
         self.expenses = None
         self.budget = None
-        self.color = "black"
+        self.color = "white"
 
         self.create_cards()
         self.render_cards()
 
         # Refresh Button
-        self.refresh_butt = ctk.CTkButton(self.description_frame, text="↻", font=("", 24, "bold"), command=self.refresh)
+        self.refresh_butt = ctk.CTkButton(self.description_frame, text="↻", font=("", 24, "bold"), command=self.refresh, fg_color="#468232")
         self.refresh_butt.grid(row=1, column=0, pady=10, padx=20, sticky="nsw")
 
         # Heat Map
@@ -50,7 +50,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.heatmap = Heatmap(self, self.start_date, self.frequency_table, None)
         self.heatmap.grid(row=2, column=0, sticky="nsw", padx=20, pady=10)
 
-        self.indicator = ctk.CTkFrame(self, width=300, height=40, fg_color="black")
+        self.indicator = ctk.CTkFrame(self, width=300, height=40, fg_color="#090a14")
         self.indicator.grid_propagate(False)
         self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=1)
 
@@ -64,8 +64,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.mini_tree = ttk.Treeview(self, columns=self.columns, show="headings", height=10)
 
-        # placeholder frame
-        self.frame = ctk.CTkFrame(self)
+
         self.graphs = Graph(self)
         self.graphs.grid(row=5, column=0, sticky="nsew")
 
@@ -89,9 +88,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.description_frame.columnconfigure(2, weight=1)
 
     def create_cards(self):
-        self.balance = Flashcard(self.description_frame, "Balance", round(self.get_balance(), 2), "#478af5", text_color=self.color)
-        self.expenses = Flashcard(self.description_frame, "Expenses",  round(self.get_expenses(), 2), "#478af5")
-        self.budget = Flashcard(self.description_frame, "Budget", "0.0", "#478af5")
+        self.balance = Flashcard(self.description_frame, "Balance", round(self.get_balance(), 2), "#151d28", text_color=self.color)
+        self.expenses = Flashcard(self.description_frame, "Expenses",  round(self.get_expenses(), 2), "#151d28")
+        self.budget = Flashcard(self.description_frame, "Budget", "0.0", "#151d28")
 
     def render_cards(self):
         self.balance.grid(row=2, column=0, sticky="nsew", padx=20, pady=10)
@@ -144,6 +143,23 @@ class Dashboard(ctk.CTkScrollableFrame):
             self.mini_tree.heading(column, text=column)
             self.mini_tree.column(column, anchor="center", width=200)
 
+        style = ttk.Style()
+        style.theme_use("default")
+        # enlarge row size and font
+        style.configure("Treeview",
+                        background="#151d28",
+                        foreground="white",
+                        rowheight=40,
+                        fieldbackground="#151d28",
+                        font=("Segoe UI", 14))
+        # style Header cells
+        style.configure("Treeview.Heading",
+                        background="#25562e",  # <-- Header background
+                        foreground="white",  # <-- Header text color
+                        font=("Segoe UI", 14, "bold"))
+        style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
+        style.map('Treeview', background=[('selected', '#1f6aa5')])
+
         self.mini_tree.grid(row=4, column=0, sticky="nsew", padx=20, pady=1)
 
     def update_heatmap(self):
@@ -176,9 +192,9 @@ class Dashboard(ctk.CTkScrollableFrame):
 
 class Flashcard(ctk.CTkFrame):
 
-    def __init__(self, master, title, text, color, text_color="black"):
+    def __init__(self, master, title, text, color, text_color="#ebede9"):
         super().__init__(master=master, fg_color=color)
-        self.title = ctk.CTkLabel(self, text=title, font=("", 16, "bold"), text_color="black")
+        self.title = ctk.CTkLabel(self, text=title, font=("", 16, "bold"), text_color="#ebede9")
         self.text = ctk.CTkLabel(self, text=text, font=("", 14, "bold"), text_color=text_color)
         self.display_text()
 
@@ -189,7 +205,7 @@ class Flashcard(ctk.CTkFrame):
 
 class Graph(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master=master)
+        super().__init__(master=master, fg_color="#090a14")
 
         # Pie Chart (Category Data)
         df = self.category_expenses()
@@ -197,7 +213,7 @@ class Graph(ctk.CTkFrame):
         fig1, ax1 = plt.subplots(figsize=(4, 4))
         ax1.pie(df["Total"], labels=df["Category"], autopct='%1.1f%%')
         ax1.set_title("Category-wise Expenses")
-        fig1.set_facecolor('#262625')
+        fig1.set_facecolor('#090a14')
         self.plot_to_ctk(fig1).pack(padx=10, pady=10, side="left")
 
         # Line Chart (Income and Expense Data)
@@ -209,14 +225,14 @@ class Graph(ctk.CTkFrame):
         ax2.set_title("Income vs Expense")
         ax2.set_ylabel("Amount")
         ax2.legend()
-        fig2.set_facecolor('#262625')
+        fig2.set_facecolor('#090a14')
         self.plot_to_ctk(fig2).pack(padx=10, pady=10, side="left")
 
         # Bar chart (User Data)
         df = self.user_expenses()
         fig3, ax3 = plt.subplots(figsize=(7, 5))
         sns.barplot(data=df, x="Users", y="Total", hue="Users", legend=False)
-        fig3.set_facecolor('#262625')
+        fig3.set_facecolor('#090a14')
         ax3.set_title("Total Spend by Users")
         self.plot_to_ctk(fig3).pack(padx=10, pady=10, side="left")
 

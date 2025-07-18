@@ -73,7 +73,7 @@ class Heatmap(ctk.CTkFrame):
     def __init__(self, master, start_date, freq_table, color_gradient=None):
 
         # main-setup
-        super().__init__(master=master, fg_color="black", width=600, height=250)
+        super().__init__(master=master, fg_color="#090a14", width=600, height=250)
 
         self.parent = master
 
@@ -88,7 +88,7 @@ class Heatmap(ctk.CTkFrame):
 
         # Default colour gradient [Github style Green]
         if not color_gradient:
-            self.color_gradient = ["#242222", "#7bc96f", "#239a3b", "#196127"]
+            self.color_gradient = ["#151d28", "#7bc96f", "#239a3b", "#196127"]
         else:
             self.color_gradient = color_gradient
 
