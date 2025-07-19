@@ -55,7 +55,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.indicator.grid(row=3, column=0, sticky="nw", padx=20, pady=1)
 
         self.indicator_title = ctk.CTkLabel(self.indicator, text="click value returned here", text_color="white",
-                                            font=("", 16, "bold"))
+                                            font=("", 14, "italic"))
         self.indicator_title.grid(row=0, column=1, sticky="ns", padx=10)
 
         self.indicator_text = ctk.CTkLabel(self.indicator, text="No transactions", text_color="red")
@@ -64,9 +64,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.mini_tree = ttk.Treeview(self, columns=self.columns, show="headings", height=10)
 
-
+        ctk.CTkLabel(self, text="Data Visualization", font=("", 25, "bold")).grid(row=5, column=0, sticky="sw", pady=60, padx=10)
         self.graphs = Graph(self)
-        self.graphs.grid(row=5, column=0, sticky="nsew")
+        self.graphs.grid(row=6, column=0, sticky="nsew")
 
     def main_label(self):
         label = ctk.CTkLabel(master=self, text="Dashboard", font=("", 30, "bold"))
@@ -160,6 +160,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
         style.map('Treeview', background=[('selected', '#1f6aa5')])
 
+        self.mini_tree.tag_configure("highlight", background="#1fc500")
         self.mini_tree.grid(row=4, column=0, sticky="nsew", padx=20, pady=1)
 
     def update_heatmap(self):
@@ -214,7 +215,8 @@ class Graph(ctk.CTkFrame):
         ax1.pie(df["Total"], labels=df["Category"], autopct='%1.1f%%')
         ax1.set_title("Category-wise Expenses")
         fig1.set_facecolor('#090a14')
-        self.plot_to_ctk(fig1).pack(padx=10, pady=10, side="left")
+        # self.plot_to_ctk(fig1).pack(padx=10, pady=10, side="left")
+        self.plot_to_ctk(fig1).grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Line Chart (Income and Expense Data)
         fig2, ax2 = plt.subplots(figsize=(7, 5))
@@ -226,7 +228,7 @@ class Graph(ctk.CTkFrame):
         ax2.set_ylabel("Amount")
         ax2.legend()
         fig2.set_facecolor('#090a14')
-        self.plot_to_ctk(fig2).pack(padx=10, pady=10, side="left")
+        self.plot_to_ctk(fig2).grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         # Bar chart (User Data)
         df = self.user_expenses()
@@ -234,7 +236,7 @@ class Graph(ctk.CTkFrame):
         sns.barplot(data=df, x="Users", y="Total", hue="Users", legend=False)
         fig3.set_facecolor('#090a14')
         ax3.set_title("Total Spend by Users")
-        self.plot_to_ctk(fig3).pack(padx=10, pady=10, side="left")
+        self.plot_to_ctk(fig3).grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
     def user_expenses(self):
         cf = pd.DataFrame({'Users': [], 'Total': []})

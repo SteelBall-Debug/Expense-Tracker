@@ -148,6 +148,8 @@ class Heatmap(ctk.CTkFrame):
             self.parent.indicator_text.grid(row=1, column=1, sticky="ns", padx=10)
             self.parent.mini_tree.grid_forget()
         else:
+            total = 0
+            count= 0
             self.parent.indicator.configure(height=40, width=360)
             self.parent.indicator_text.grid_forget()
             self.parent.clear_table()
@@ -163,9 +165,15 @@ class Heatmap(ctk.CTkFrame):
                         for entry in transactions:
                             for i in ids:
                                 if entry["id"] == i:
+                                    total += entry["amount"]
                                     row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"],
                                            entry["amount"], entry["note"]]
+                                    count += 1
                                     self.parent.mini_tree.insert("", ctk.END, values=row)
+                        if count == 1:
+                            pass
+                        else:
+                            self.parent.mini_tree.insert("", ctk.END, values=('', '', '', '', 'Total:', round(total, 2), ''), tags=("highlight",))
 
     def add_color_index(self):
         less = ctk.CTkLabel(self, text="Less", font=("", 10, "bold"))

@@ -5,7 +5,7 @@ class Settings(ctk.CTkScrollableFrame):
 
     def __init__(self, master):
 
-        super().__init__(master=master, fg_color="#151d28")
+        super().__init__(master=master, fg_color="#151d28", bg_color="#151d28")
 
         self.create_grid()
         self.main_label()
@@ -28,7 +28,7 @@ class Settings(ctk.CTkScrollableFrame):
         self.add_user_entry = ctk.CTkEntry(self, height=50, fg_color="#10141f")
         self.add_user_button = ctk.CTkButton(self, text="+", font=(" ", 15, "bold"), width=50, fg_color="#468232", hover_color="#1f5f5b")
 
-        self.current_users = ['You', "Jane", "Jhon"]
+        self.current_users = ['You', "Jane", "John"]
         self.display_current_users = ctk.CTkSegmentedButton(self, values=self.current_users, font=(" ", 14, "bold"), fg_color="#151d28",
                                                             unselected_color="#25562e", selected_color="#75a743")
 

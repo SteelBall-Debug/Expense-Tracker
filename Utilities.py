@@ -57,6 +57,7 @@ class Filterer(ctk.CTkFrame):
 
     def on_reset(self):
         self.category_box.set("Select Category")
+        self.users.set("Select User")
         self.keyword_entry.delete(0, 'end')
         if self.reset_callback:
             self.reset_callback()
@@ -76,7 +77,8 @@ class Filterer(ctk.CTkFrame):
                 continue
             if keyword and keyword not in entry["note"].lower():
                 continue
-            if user and user not in entry["user"].lower():
+            # if user and user not in entry["user"].lower():
+            if user != "select user" and user != entry["category"].lower():
                 continue
             filtered.append(entry)
 

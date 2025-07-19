@@ -11,14 +11,14 @@ class Table(ctk.CTkScrollableFrame):
 
     def __init__(self, master, dashboard):
 
-        super().__init__(master=master)
+        super().__init__(master=master, fg_color="#090a14", bg_color="#090a14")
         self.parent = master
         self.dashboard = dashboard
         self.create_grid()
 
         # Transactor inside a frame
-        self.transactor = TransactionEngine(self)
-        self.transactor.grid(row=0, column=0, sticky="nsw", pady=10)
+        self.transactor = TransactionEngine(self.parent)
+        # self.transactor.grid(row=0, column=0, sticky="nsw", pady=10)
 
         # Label
         self.label = ctk.CTkLabel(self, text="      Transaction Table", font=("Segoe UI", 24, "bold"))
@@ -26,34 +26,39 @@ class Table(ctk.CTkScrollableFrame):
 
         # Refresh Button
         self.transactions = None
-        self.refresh = ctk.CTkButton(self, text="↻", font=("", 24, "bold"), width=100, command=self.refresh_table)
+        self.refresh = ctk.CTkButton(self, text="↻", font=("", 24, "bold"), width=100, fg_color="#468232", hover_color="#1f5f5b", command=self.refresh_table)
         self.refresh.grid(row=1, column=0, sticky="nw", pady=10, padx=10)
 
         # Filtration system
         self.current_filter = ()
         self.toggle = False
-        self.filter_butt = ctk.CTkButton(self, text="☰", text_color="black", width=60, height=35, fg_color="#478af5", command=self.show_filter_menu)
+        self.toggle2 = False
+        self.filter_butt = ctk.CTkButton(self, text="☰", text_color="white", width=60, height=35, fg_color="#468232", hover_color="#1f5f5b", command=self.show_filter_menu)
         self.filter_menu = Filterer(self.parent, self)
         self.filter_butt.grid(row=1, column=0, sticky="nw", pady=10, padx=120)
 
+        # Add transaction button
+        self.add = ctk.CTkButton(self, text="+", width=60, height=35, font=("", 16, "bold"), fg_color="#468232", hover_color="#1f5f5b", command=self.show_transaction_menu)
+        self.add.grid(row=1, column=0, sticky="nw", pady=10, padx=190)
+
         # Table view frame
-        self.table_frame = ctk.CTkFrame(self, fg_color="black")
+        self.table_frame = ctk.CTkFrame(self, height=200)
         self.table_frame.grid(row=2, column=0, sticky='nsew', pady=10)
 
         # Table view variables
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
-        self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=10)
+        self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=60)
 
-        self.delete_selected = ctk.CTkButton(self, text="Delete Selected", text_color="white", fg_color="#f51168", bg_color="#f51168", command=self.delete_entry)
+        self.delete_selected = ctk.CTkButton(self, text="Delete Selected",font=("", 16, "bold"), height=35, text_color="white", fg_color="#f51168",hover_color="#f51150", command=self.delete_entry)
         self.delete_selected.grid(row=1, column=0, sticky="ne", pady=10, padx=10)
 
         self.entry_id = 0
         self.setup_table()
 
     def create_grid(self):
-        self.rowconfigure(0, weight=20)
-        self.rowconfigure(1, weight=10)
-        self.rowconfigure(2, weight=70)
+        # self.rowconfigure(0, weight=20)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=10)
         self.columnconfigure(0, weight=1)
 
     def setup_table(self):
@@ -66,17 +71,17 @@ class Table(ctk.CTkScrollableFrame):
         style.theme_use("default")
         # enlarge row size and font
         style.configure("Treeview",
-                        background="#2b2b2b",
+                        background="#151d28",
                         foreground="white",
-                        rowheight=40,
-                        fieldbackground="#2b2b2b",
-                        font=("Segoe UI", 14))
+                        rowheight=50,
+                        fieldbackground="#151d28",
+                        font=("Segoe UI", 16))
         # style Header cells
         style.configure("Treeview.Heading",
-                        background="#1054c2",  # <-- Header background
+                        background="#25562e",  # <-- Header background
                         foreground="white",  # <-- Header text color
                         font=("Segoe UI", 14, "bold"))
-        style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))  # enlarge heading fonts
+        style.configure("Treeview.Heading", font=("Segoe UI", 20, "bold"))  # enlarge heading fonts
         style.map('Treeview', background=[('selected', '#1f6aa5')])
 
         with open("Transactions.json", "r+") as f:
@@ -90,17 +95,8 @@ class Table(ctk.CTkScrollableFrame):
         self.tree.pack(fill="both", expand=True)
 
     def refresh_table(self):
-        with open("Transactions.json", "r+") as f:
-            file_data = json.load(f)
-            transactions = file_data["Transactions"]
-
-            for entry in transactions:
-                if entry in self.transactions:
-                    print("no new entries")
-                else:
-                    row = [entry["id"], entry["date"], entry["user"], entry["type"], entry["category"], entry["amount"], entry["note"]]
-                    self.transactions.append(entry)
-                    self.tree.insert("", tk.END, values=row)
+        self.clear_treeview()
+        self.setup_table()
 
     def delete_entry(self):
         selected_entry = self.tree.selection()
@@ -132,6 +128,15 @@ class Table(ctk.CTkScrollableFrame):
             self.filter_menu.grid(row=0, column=1)
             self.filter_menu.lift()
             self.toggle = True
+
+    def show_transaction_menu(self):
+        if self.toggle2:
+            self.transactor.grid_forget()
+            self.toggle2 = False
+        else:
+            self.transactor.grid(row=0, column=1)
+            self.transactor.lift()
+            self.toggle2 = True
 
     def clear_treeview(self):
         for item in self.tree.get_children():

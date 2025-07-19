@@ -28,12 +28,12 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.dashboard.graphs.on_close)
 
         # Tabular-View
-        # self.table_view = Table(self, self.dashboard)
+        self.table_view = Table(self, self.dashboard)
 
         # Settings
         # self.settings = Settings(self)
 
-        self.grid_dash()
+        self.grid_table()
 
         self.mainloop()
 
