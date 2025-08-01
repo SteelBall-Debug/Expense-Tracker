@@ -4,7 +4,8 @@ from tkinter import font, ttk
 from tkcalendar import DateEntry
 import json
 from Utilities import Filterer
-# github is annoying
+from Settings import CATEGORIES, USERS
+
 
 
 class Table(ctk.CTkScrollableFrame):
@@ -17,7 +18,7 @@ class Table(ctk.CTkScrollableFrame):
         self.create_grid()
 
         # Transactor inside a frame
-        self.transactor = TransactionEngine(self.parent)
+        self.transactor = TransactionEngine(self.parent, self)
         # self.transactor.grid(row=0, column=0, sticky="nsw", pady=10)
 
         # Label
@@ -42,12 +43,12 @@ class Table(ctk.CTkScrollableFrame):
         self.add.grid(row=1, column=0, sticky="nw", pady=10, padx=190)
 
         # Table view frame
-        self.table_frame = ctk.CTkFrame(self, height=200)
+        self.table_frame = ctk.CTkFrame(self, height=100)
         self.table_frame.grid(row=2, column=0, sticky='nsew', pady=10)
 
         # Table view variables
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
-        self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=60)
+        self.tree = ttk.Treeview(self.table_frame, columns=self.columns, show="headings", height=40)
 
         self.delete_selected = ctk.CTkButton(self, text="Delete Selected",font=("", 16, "bold"), height=35, text_color="white", fg_color="#f51168",hover_color="#f51150", command=self.delete_entry)
         self.delete_selected.grid(row=1, column=0, sticky="ne", pady=10, padx=10)
@@ -116,7 +117,6 @@ class Table(ctk.CTkScrollableFrame):
                             f.seek(0)
                             json.dump(file_data, f, indent=4)
                             f.truncate()
-                            print("entry deleted")
                         except Exception as e:
                             print(f"Error while deleting file {e}")
 
@@ -144,52 +144,60 @@ class Table(ctk.CTkScrollableFrame):
 
 
 class TransactionEngine(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, table):
 
-        super().__init__(master=master, fg_color="#1054c2", width=500)
+        super().__init__(master=master, fg_color="#1f1f1f", width=470, height=400)
         self.create_grid()
         self.parent = master
+        self.table = table
 
         # Add Transaction Button
-        self.add_transaction = ctk.CTkButton(self, text="+", font=("", 25, "bold"), fg_color="#f51168", text_color="black",
+        self.add_transaction = ctk.CTkButton(self, text="+", font=("", 25, "bold"),  fg_color="#468232", hover_color="#1f5f5b",
                                              command=self.get_values)
 
+        # exit button
+        self.exit_button = ctk.CTkButton(self, text="x", fg_color="red", bg_color="red", text_color="white",
+                                    hover_color="white", command=self.table.show_transaction_menu, width=3, font=("", 18, "bold"))
+
         # Users Combo-Box
-        self.user_values = ['You', 'John', 'Jane']
+        self.user_values = USERS
         self.users = ctk.CTkComboBox(master=self, values=self.user_values, height=40, width=200, justify="center",
-                                     fg_color="#478af5", text_color="black")
+                                     fg_color="#151d28")
 
         # Amount Entry-Box
         self.amount = ctk.CTkEntry(master=self, placeholder_text="$ ", height=40, width=110,
-                                   text_color="black", fg_color="white")
+                                    fg_color="#10141f")
 
         # Transaction type Combo-Box
         self.types = ["Income", "Expense"]
         self.type = ctk.CTkComboBox(master=self, values=self.types, height=40, width=200, justify="center",
-                                    fg_color="#478af5", text_color="black")
+                                    fg_color="#151d28")
 
         # Category Combo-Box
-        self.categories = ["food", "clothing", "entertainment", "bills", "repairs", "misc"]
+        self.categories = CATEGORIES
         self.category = ctk.CTkComboBox(master=self, values=self.categories, height=40, width=200, justify="center"
-                                        , fg_color="#478af5", text_color="black")
+                                        , fg_color="#151d28")
 
         # Calendar widget
         my_font = font.Font(family="Arial", size=12, weight="bold")
-        self.date = DateEntry(self, date_pattern="dd-mm-yyyy", height=100, font=my_font, bg="orange")
+        self.date = DateEntry(self, date_pattern="dd-mm-yyyy", height=100, font=my_font, bg="#151d28")
 
         # Note widget
-        self.note = ctk.CTkTextbox(self,fg_color="#478af5", height=100, width=160, text_color="black")
+        self.note = ctk.CTkTextbox(self, fg_color="#10141f", height=100, width=160)
 
+        self.grid_propagate(False)
         self.grid_widgets()
 
     def grid_widgets(self):
-        ctk.CTkLabel(self, text="Add Transaction : ", font=("", 25, "bold"), pady=10, padx=10, text_color="black").grid(row=0, column=1, sticky="nsew")
+        ctk.CTkLabel(self, text="Add Transaction : ", font=("", 25, "bold"), pady=10, padx=10).grid(row=0, column=1, sticky="nsew")
         self.add_transaction.grid(row=0, column=2, sticky="nsw", pady=10)
+
+        self.exit_button.grid(row=0, column=2, sticky="ne", pady=10)
 
         self.users.set("Select user")
         self.users.grid(row=1, column=1, sticky="nw", padx=10, pady=10)
 
-        ctk.CTkLabel(self, text="Enter Amount:", text_color="black", font=("", 12, "bold")).grid(row=1, column=2, pady=10, padx=10, sticky="nsw")
+        ctk.CTkLabel(self, text="Enter Amount:", font=("", 12, "bold")).grid(row=1, column=2, pady=10, padx=10, sticky="nsw")
         self.amount.grid(row=1, column=2, pady=10, padx=10, sticky="nse")
 
         self.type.set("Transaction type")
@@ -198,10 +206,10 @@ class TransactionEngine(ctk.CTkFrame):
         self.category.set("Select category")
         self.category.grid(row=2, column=2, sticky="nw", padx=10, pady=10)
 
-        ctk.CTkLabel(self, text="Date: ", text_color="black", font=("", 12, "bold")).grid(row=3, column=1, pady=10, padx=10, sticky="nsw")
+        ctk.CTkLabel(self, text="Date: ", font=("", 12, "bold")).grid(row=3, column=1, pady=10, padx=10, sticky="nsw")
         self.date.grid(row=3, column=1, sticky="nse", padx=10, pady=10, ipadx=10)
 
-        ctk.CTkLabel(self, text="Note: ", text_color="black", font=("", 10, "bold")).grid(row=4, column=1, pady=10, padx=10, sticky="nsw")
+        ctk.CTkLabel(self, text="Note: ", font=("", 12, "bold")).grid(row=4, column=1, pady=10, padx=10, sticky="nsw")
         self.note.grid(row=4, column=1, sticky="nse", padx=10, pady=10)
 
     def create_grid(self):

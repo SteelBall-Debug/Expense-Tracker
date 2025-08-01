@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import font
-# from tkcalendar import DateEntry
+from Settings import CATEGORIES, USERS
 import json
 
 
@@ -24,12 +24,12 @@ class Filterer(ctk.CTkFrame):
         my_font = font.Font(family="Arial", size=12, weight="bold")
 
         # Category
-        self.category_box = ctk.CTkComboBox(self, values=["Food", "Clothing", "Entertainment", "Bills", "Repairs", "Misc"], width=180)
+        self.category_box = ctk.CTkComboBox(self, values=CATEGORIES, width=180)
         self.category_box.set("Select Category")
         self.category_box.grid(row=2, column=0, pady=5, padx=20, sticky="ew")
 
         # Users
-        self.user_list = self.table.transactor.user_values
+        self.user_list = USERS
         self.users = ctk.CTkComboBox(self, values=self.user_list, width=180)
         self.users.set("Select User")
         self.users.grid(row=3, column=0, pady=5, padx=20, sticky="ew")

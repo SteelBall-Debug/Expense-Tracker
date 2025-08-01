@@ -1,4 +1,17 @@
 {
+    "categories": [
+        "entertainment",
+        "repairs",
+        "misc",
+        "food",
+        "clothing",
+        "bills"
+    ],
+    "users": [
+        "You",
+        "John",
+        "Jane"
+    ],
     "id_lookup": {
         "2025-06-28": [
             1,

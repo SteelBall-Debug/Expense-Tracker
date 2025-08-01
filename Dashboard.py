@@ -7,9 +7,11 @@ from Heatmap import Heatmap
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
+from Settings import CATEGORIES, USERS
 
 
-class Dashboard(ctk.CTkScrollableFrame):
+
+class Dashboarder(ctk.CTkScrollableFrame):
 
     def __init__(self, master):
 
@@ -129,7 +131,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.update_heatmap()
         self.graphs.destroy()
         self.graphs = Graph(self)
-        self.graphs.grid(row=5, column=1, sticky="nsew")
+        self.graphs.grid(row=6, column=0, sticky="nsew")
 
     def show_indicator(self):
         self.indicator_title.configure(text=self.heatmap.last_clicked)
@@ -240,7 +242,8 @@ class Graph(ctk.CTkFrame):
 
     def user_expenses(self):
         cf = pd.DataFrame({'Users': [], 'Total': []})
-        cat_label = ['You', 'Jane', "John"]
+        labels = ['You', 'Jane', "John"] + USERS
+        cat_label = list(set(labels))
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
@@ -273,7 +276,8 @@ class Graph(ctk.CTkFrame):
 
     def category_expenses(self):
         cf = pd.DataFrame({'Category': [], 'Total': []})
-        cat_label = ["food", "clothing", "entertainment", "bills", "repairs", "misc"]
+        labels = ["food", "clothing", "entertainment", "bills", "repairs", "misc"] + CATEGORIES
+        cat_label = list(set(labels))
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]

@@ -1,9 +1,11 @@
 # Personal Finance/Expense Tracker App made using Custom tkinter
 
 import customtkinter as ctk
-from Dashboard import Dashboard
+from Dashboard import Dashboarder
 from Settings import Settings
 from Tabular_view import Table
+import os
+import sys
 
 
 class App(ctk.CTk):
@@ -23,7 +25,7 @@ class App(ctk.CTk):
         self.sidebar.grid(row=0, column=0, sticky="nsew")
 
         # Dashboard
-        self.dashboard = Dashboard(self)
+        self.dashboard = Dashboarder(self)
         # DESTROYS graphs on exiting the app
         self.protocol("WM_DELETE_WINDOW", self.dashboard.graphs.on_close)
 
@@ -31,9 +33,9 @@ class App(ctk.CTk):
         self.table_view = Table(self, self.dashboard)
 
         # Settings
-        # self.settings = Settings(self)
+        self.settings = Settings(self)
 
-        self.grid_table()
+        self.grid_dash()
 
         self.mainloop()
 
@@ -43,16 +45,27 @@ class App(ctk.CTk):
         self.columnconfigure(1, weight=75)
 
     def grid_dash(self):
+        self.destroy_grids()
         self.dashboard.grid(row=0, column=1, sticky="nsew")
         self.dashboard.lift()
 
     def grid_table(self):
+        self.destroy_grids()
         self.table_view.grid(row=0, column=1, sticky="nsew")
         self.table_view.lift()
 
     def grid_settings(self):
+        self.destroy_grids()
         self.settings.grid(row=0, column=1, sticky="nsew")
         self.settings.lift()
+
+    def destroy_grids(self):
+        self.dashboard.grid_forget()
+        self.table_view.grid_forget()
+        self.settings.grid_forget()
+
+    def apply_updates(self):
+        pass
 
 
 class Sidebar(ctk.CTkFrame):
