@@ -7,11 +7,10 @@ from Heatmap import Heatmap
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
-from Settings import CATEGORIES, USERS
+from Settings import import_cache_data
 
 
-
-class Dashboarder(ctk.CTkScrollableFrame):
+class Dashboard(ctk.CTkScrollableFrame):
 
     def __init__(self, master):
 
@@ -210,6 +209,9 @@ class Graph(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master=master, fg_color="#090a14")
 
+        # import lists
+        self.categories, self.users = import_cache_data()
+
         # Pie Chart (Category Data)
         df = self.category_expenses()
         plt.style.use("dark_background")
@@ -242,7 +244,7 @@ class Graph(ctk.CTkFrame):
 
     def user_expenses(self):
         cf = pd.DataFrame({'Users': [], 'Total': []})
-        labels = ['You', 'Jane', "John"] + USERS
+        labels = ['You', 'Jane', "John"] + self.users
         cat_label = list(set(labels))
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)
@@ -276,7 +278,7 @@ class Graph(ctk.CTkFrame):
 
     def category_expenses(self):
         cf = pd.DataFrame({'Category': [], 'Total': []})
-        labels = ["food", "clothing", "entertainment", "bills", "repairs", "misc"] + CATEGORIES
+        labels = ["food", "clothing", "entertainment", "bills", "repairs", "misc"] + self.categories
         cat_label = list(set(labels))
         with open("Transactions.json", "r+") as f:
             file_data = json.load(f)

@@ -4,8 +4,7 @@ from tkinter import font, ttk
 from tkcalendar import DateEntry
 import json
 from Utilities import Filterer
-from Settings import CATEGORIES, USERS
-
+from Settings import import_cache_data
 
 
 class Table(ctk.CTkScrollableFrame):
@@ -17,8 +16,11 @@ class Table(ctk.CTkScrollableFrame):
         self.dashboard = dashboard
         self.create_grid()
 
+        # import lists
+        categories, users = import_cache_data()
+
         # Transactor inside a frame
-        self.transactor = TransactionEngine(self.parent, self)
+        self.transactor = TransactionEngine(self.parent, self, categories, users)
         # self.transactor.grid(row=0, column=0, sticky="nsw", pady=10)
 
         # Label
@@ -144,7 +146,7 @@ class Table(ctk.CTkScrollableFrame):
 
 
 class TransactionEngine(ctk.CTkFrame):
-    def __init__(self, master, table):
+    def __init__(self, master, table, cat, users):
 
         super().__init__(master=master, fg_color="#1f1f1f", width=470, height=400)
         self.create_grid()
@@ -160,7 +162,7 @@ class TransactionEngine(ctk.CTkFrame):
                                     hover_color="white", command=self.table.show_transaction_menu, width=3, font=("", 18, "bold"))
 
         # Users Combo-Box
-        self.user_values = USERS
+        self.user_values = users
         self.users = ctk.CTkComboBox(master=self, values=self.user_values, height=40, width=200, justify="center",
                                      fg_color="#151d28")
 
@@ -174,7 +176,7 @@ class TransactionEngine(ctk.CTkFrame):
                                     fg_color="#151d28")
 
         # Category Combo-Box
-        self.categories = CATEGORIES
+        self.categories = cat
         self.category = ctk.CTkComboBox(master=self, values=self.categories, height=40, width=200, justify="center"
                                         , fg_color="#151d28")
 

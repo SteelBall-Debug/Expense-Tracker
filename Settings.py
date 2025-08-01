@@ -13,9 +13,11 @@ def import_cache_data():
         CATEGORIES = file_data["categories"]
         global USERS
         USERS = file_data["users"]
+    return CATEGORIES, USERS
 
 
-import_cache_data()  # import user and category lists from Cache
+# import user and category lists from Cache
+import_cache_data()
 
 
 class Settings(ctk.CTkScrollableFrame):
@@ -213,3 +215,4 @@ class Settings(ctk.CTkScrollableFrame):
                 self.us_tree.insert("", ctk.END, values=[new_user])
             import_cache_data()
             self.apply_updates()
+
