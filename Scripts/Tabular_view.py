@@ -3,8 +3,11 @@ import tkinter as tk
 from tkinter import font, ttk
 from tkcalendar import DateEntry
 import json
-from Utilities import Filterer
-from Settings import import_cache_data
+from Scripts.Utilities import Filterer
+from Scripts.Settings import import_cache_data
+import os
+
+transaction_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Transactions.json')
 
 
 class Table(ctk.CTkScrollableFrame):
@@ -87,7 +90,7 @@ class Table(ctk.CTkScrollableFrame):
         style.configure("Treeview.Heading", font=("Segoe UI", 20, "bold"))  # enlarge heading fonts
         style.map('Treeview', background=[('selected', '#1f6aa5')])
 
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             self.transactions = file_data["Transactions"]
             self.entry_id = len(self.transactions)
@@ -110,7 +113,7 @@ class Table(ctk.CTkScrollableFrame):
 
             self.tree.delete(selected_entry[0])
 
-            with open("Transactions.json", "r+") as f:
+            with open(transaction_path, "r+") as f:
                 file_data = json.load(f)
                 for entry in file_data["Transactions"]:
                     if entry["id"] == selected_id:
@@ -224,7 +227,7 @@ class TransactionEngine(ctk.CTkFrame):
     def get_values(self):
 
         # assign values to local variables
-        num = self.parent.entry_id + 1
+        num = self.table.entry_id + 1
         user_value = self.users.get()
         amount = float(self.amount.get())
         type_value = self.type.get()
@@ -235,7 +238,7 @@ class TransactionEngine(ctk.CTkFrame):
         # check for missing values
         if user_value in self.user_values and type_value in self.types and category in self.categories:
             if amount >= 0:
-                with open("Transactions.json", "r+") as f:
+                with open(transaction_path, "r+") as f:
                     file_data = json.load(f)
 
                     new_data = {

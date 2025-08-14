@@ -1,13 +1,16 @@
 import customtkinter as ctk
 from tkinter import ttk
 import json
+import os
 
 CATEGORIES = None
 USERS = None
 
+cache_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Cache.json')
+
 
 def import_cache_data():
-    with open("Cache.json", "r+") as f:
+    with open(cache_path, "r+") as f:
         file_data = json.load(f)
         global CATEGORIES
         CATEGORIES = file_data["categories"]
@@ -141,7 +144,7 @@ class Settings(ctk.CTkScrollableFrame):
             for item_id in selected_entry:
                 cat = str(self.cat_tree.item(item_id)['values'][0])
 
-                with open("Cache.json", "r+") as file:
+                with open(cache_path, "r+") as file:
                     data = json.load(file)
                     for category in data["categories"]:
                         if category == cat:
@@ -166,7 +169,7 @@ class Settings(ctk.CTkScrollableFrame):
 
                 us = str(self.us_tree.item(item_id)['values'][0])
 
-                with open("Cache.json", "r+") as file:
+                with open(cache_path, "r+") as file:
                     data = json.load(file)
                     for user in data["users"]:
                         if user == us:
@@ -185,7 +188,7 @@ class Settings(ctk.CTkScrollableFrame):
     def add_category(self):
         new_category = str(self.add_category_entry.get()).lower()
 
-        with open("Cache.json", "r+") as file:
+        with open(cache_path, "r+") as file:
             data = json.load(file)
 
             if new_category in data["categories"]:
@@ -202,7 +205,7 @@ class Settings(ctk.CTkScrollableFrame):
     def add_user(self):
         new_user = str(self.add_user_entry.get()).lower()
 
-        with open("Cache.json", "r+") as file:
+        with open(cache_path, "r+") as file:
             data = json.load(file)
 
             if new_user in data["users"]:

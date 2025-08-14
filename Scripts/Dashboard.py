@@ -3,11 +3,15 @@ import customtkinter as ctk
 import pandas as pd
 from datetime import date, datetime
 from tkinter import ttk
-from Heatmap import Heatmap
+from Scripts.Heatmap import Heatmapwidget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
-from Settings import import_cache_data
+from Scripts.Settings import import_cache_data
+import os
+
+transaction_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Transactions.json')
+cache_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Cache.json')
 
 
 class Dashboard(ctk.CTkScrollableFrame):
@@ -25,6 +29,7 @@ class Dashboard(ctk.CTkScrollableFrame):
 
         self.total = 0
         self.balance_value = 0
+        self.income = 0
 
         self.balance = None
         self.expenses = None
@@ -42,13 +47,13 @@ class Dashboard(ctk.CTkScrollableFrame):
         current_year = datetime.now().year
         self.start_date = date(current_year, 1, 1)
 
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
             self.frequency_table = df[["date"]].value_counts()
 
-        self.heatmap = Heatmap(self, self.start_date, self.frequency_table, None)
+        self.heatmap = Heatmapwidget(self, self.start_date, self.frequency_table, None)
         self.heatmap.grid(row=2, column=0, sticky="nsw", padx=20, pady=10)
 
         self.indicator = ctk.CTkFrame(self, width=300, height=40, fg_color="#090a14")
@@ -65,7 +70,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.columns = ("Sr.no.", "Date", "User", "Type", "Category", "Amount", "Note")
         self.mini_tree = ttk.Treeview(self, columns=self.columns, show="headings", height=10)
 
-        ctk.CTkLabel(self, text="Data Visualization", font=("", 25, "bold")).grid(row=5, column=0, sticky="sw", pady=60, padx=10)
+        ctk.CTkLabel(self, text="Data Visualization", font=("", 35, "bold")).grid(row=5, column=0, sticky="sw", pady=60, padx=10)
         self.graphs = Graph(self)
         self.graphs.grid(row=6, column=0, sticky="nsew")
 
@@ -91,7 +96,7 @@ class Dashboard(ctk.CTkScrollableFrame):
     def create_cards(self):
         self.balance = Flashcard(self.description_frame, "Balance", round(self.get_balance(), 2), "#151d28", text_color=self.color)
         self.expenses = Flashcard(self.description_frame, "Expenses",  round(self.get_expenses(), 2), "#151d28")
-        self.budget = Flashcard(self.description_frame, "Budget", "0.0", "#151d28")
+        self.budget = Flashcard(self.description_frame, "Income", round(self.get_income(), 2), "#151d28")
 
     def render_cards(self):
         self.balance.grid(row=2, column=0, sticky="nsew", padx=20, pady=10)
@@ -100,7 +105,7 @@ class Dashboard(ctk.CTkScrollableFrame):
 
     def get_expenses(self):
         total = 0
-        with open("Transactions.json", "r") as f:
+        with open(transaction_path, "r") as f:
             file_data = json.load(f)
             transactions = file_data["Transactions"]
             for entry in transactions:
@@ -109,9 +114,20 @@ class Dashboard(ctk.CTkScrollableFrame):
             self.total = total
             return total
 
+    def get_income(self):
+        total = 0
+        with open(transaction_path, "r") as f:
+            file_data = json.load(f)
+            transactions = file_data["Transactions"]
+            for entry in transactions:
+                if entry["type"] == "Income":
+                    total += entry["amount"]
+            self.income = total
+            return total
+
     def get_balance(self):
         inc = 0
-        with open("Transactions.json", "r") as f:
+        with open(transaction_path, "r") as f:
             file_data = json.load(f)
             transactions = file_data["Transactions"]
             for entry in transactions:
@@ -165,7 +181,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         self.mini_tree.grid(row=4, column=0, sticky="nsew", padx=20, pady=1)
 
     def update_heatmap(self):
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
@@ -183,7 +199,7 @@ class Dashboard(ctk.CTkScrollableFrame):
             self.update_cache(date_to_ids)
 
     def update_cache(self, new_data):
-        with open("Cache.json", "r+") as f:
+        with open(cache_path, "r+") as f:
             file_data = json.load(f)
             new_data = new_data
             file_data["id_lookup"].update(new_data)
@@ -214,6 +230,7 @@ class Graph(ctk.CTkFrame):
 
         # Pie Chart (Category Data)
         df = self.category_expenses()
+
         plt.style.use("dark_background")
         fig1, ax1 = plt.subplots(figsize=(4, 4))
         ax1.pie(df["Total"], labels=df["Category"], autopct='%1.1f%%')
@@ -235,18 +252,21 @@ class Graph(ctk.CTkFrame):
         self.plot_to_ctk(fig2).grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         # Bar chart (User Data)
-        df = self.user_expenses()
-        fig3, ax3 = plt.subplots(figsize=(7, 5))
-        sns.barplot(data=df, x="Users", y="Total", hue="Users", legend=False)
-        fig3.set_facecolor('#090a14')
-        ax3.set_title("Total Spend by Users")
-        self.plot_to_ctk(fig3).grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        if len(self.users) > 1:
+            df = self.user_expenses()
+            fig3, ax3 = plt.subplots(figsize=(7, 5))
+            sns.barplot(data=df, x="Users", y="Total", hue="Users", legend=False)
+            fig3.set_facecolor('#090a14')
+            ax3.set_title("Total Spend by Users")
+            self.plot_to_ctk(fig3).grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        else:
+            pass
 
     def user_expenses(self):
         cf = pd.DataFrame({'Users': [], 'Total': []})
-        labels = ['You', 'Jane', "John"] + self.users
+        labels = ['You'] + self.users
         cat_label = list(set(labels))
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
@@ -261,7 +281,7 @@ class Graph(ctk.CTkFrame):
         return cf
 
     def income_data(self):
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
@@ -269,7 +289,7 @@ class Graph(ctk.CTkFrame):
             return income_df
 
     def expense_data(self):
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)
@@ -280,7 +300,7 @@ class Graph(ctk.CTkFrame):
         cf = pd.DataFrame({'Category': [], 'Total': []})
         labels = ["food", "clothing", "entertainment", "bills", "repairs", "misc"] + self.categories
         cat_label = list(set(labels))
-        with open("Transactions.json", "r+") as f:
+        with open(transaction_path, "r+") as f:
             file_data = json.load(f)
             data = file_data["Transactions"]
             df = pd.DataFrame(data)

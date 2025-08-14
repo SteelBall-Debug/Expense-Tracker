@@ -1,7 +1,10 @@
 import customtkinter as ctk
 from tkinter import font
-from Settings import import_cache_data
+from Scripts.Settings import import_cache_data
 import json
+import os
+
+transaction_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Transactions.json')
 
 
 class Filterer(ctk.CTkFrame):
@@ -66,7 +69,7 @@ class Filterer(ctk.CTkFrame):
             self.reset_callback()
 
     def apply_filters(self):
-        with open("Transactions.json", "r") as f:
+        with open(transaction_path, "r") as f:
             data = json.load(f)["Transactions"]
 
         # date = self.date_entry.get().strip()
@@ -81,7 +84,7 @@ class Filterer(ctk.CTkFrame):
             if keyword and keyword not in entry["note"].lower():
                 continue
             # if user and user not in entry["user"].lower():
-            if user != "select user" and user != entry["category"].lower():
+            if user != "select user" and user != entry["user"].lower():
                 continue
             filtered.append(entry)
 

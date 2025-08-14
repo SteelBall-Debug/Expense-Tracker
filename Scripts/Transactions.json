@@ -1,0 +1,22 @@
+{
+    "Transactions": [
+        {
+            "id": 1,
+            "date": "2025-07-08",
+            "user": "jane",
+            "type": "Expense",
+            "category": "misc",
+            "amount": 1.0,
+            "note": "example expense\n"
+        },
+        {
+            "id": 2,
+            "date": "2025-06-20",
+            "user": "John",
+            "type": "Income",
+            "category": "food",
+            "amount": 1.0,
+            "note": "example income\n"
+        }
+    ]
+}

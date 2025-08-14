@@ -13,62 +13,14 @@
 import customtkinter as ctk
 import calendar
 import json
-import pandas as pd
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
+import os
+
+transaction_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Transactions.json')
+cache_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Cache.json')
 
 
-class App(ctk.CTk):
-    def __init__(self, title, size):
-
-        # main-setup
-        super().__init__()
-        self.title(title)
-        self.geometry(f'{size[0]}x{size[1]}')
-
-        current_year = datetime.now().year
-        start_date = date(current_year, 1, 1)
-
-        with open("Transactions.json", "r") as f:
-            file_data = json.load(f)
-            data = file_data["Transactions"]
-            df = pd.DataFrame(data)
-            frequency_table = df[["date"]].value_counts()
-
-        with open("Cache.json", "r+") as f:
-            file_data = json.load(f)
-            id_data = file_data["id_lookup"]
-            if id_data:
-                pass
-            else:
-                new_data = self.update_cache()
-                file_data["id_lookup"].update(new_data)
-
-                f.seek(0)
-                json.dump(file_data, f, indent=4)
-
-        self.heatmap = Heatmap(self, start_date, frequency_table, None)
-        self.heatmap.pack(pady=90)
-        self.indicator_title = ctk.CTkLabel(self, text="")
-        # self.mainloop()
-
-    def update_cache(self):
-        with open("Transactions.json", "r") as f:
-            file_data = json.load(f)
-            data = file_data["Transactions"]
-            df = pd.DataFrame(data)
-            date_to_ids = {}
-            for row in df.itertuples(index=False):
-                date_val = row.date
-                tx_id = row.id
-                # print(f"{date_val} : {tx_id}")
-                if date_val not in date_to_ids:
-                    date_to_ids[date_val] = []
-                date_to_ids[date_val].append(tx_id)
-            return date_to_ids
-# orientation="horizontal",scrollbar_button_color="#1b1c1c"
-
-
-class Heatmap(ctk.CTkFrame):
+class Heatmapwidget(ctk.CTkFrame):
 
     def __init__(self, master, start_date, freq_table, color_gradient=None):
 
@@ -154,12 +106,12 @@ class Heatmap(ctk.CTkFrame):
             self.parent.indicator_text.grid_forget()
             self.parent.clear_table()
             self.parent.setup_table()
-            with open("Cache.json", "r+") as f:
+            with open(cache_path, "r+") as f:
                 file_data = json.load(f)
                 id_data = file_data["id_lookup"]
                 if date in id_data.keys():
                     ids = id_data[date]
-                    with open("Transactions.json", "r+") as trans:
+                    with open(transaction_path, "r+") as trans:
                         file_data = json.load(trans)
                         transactions = file_data["Transactions"]
                         for entry in transactions:
@@ -189,7 +141,3 @@ class Heatmap(ctk.CTkFrame):
     def refresh(self, f_table):
         self.freq_table = f_table
         self.create_buttons()
-
-
-if __name__ == "__main__":
-    App("Heatmap", (1300, 400))

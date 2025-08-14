@@ -1,0 +1,21 @@
+{
+    "categories": [
+        "entertainment",
+        "repairs",
+        "misc",
+        "food",
+        "clothing",
+        "bills"
+    ],
+    "users": [
+        "You"
+    ],
+    "id_lookup": {
+        "2025-07-08": [
+            1
+        ],
+        "2025-06-20": [
+            2
+        ]
+    }
+}
